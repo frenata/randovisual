@@ -1,0 +1,19 @@
+[project]
+name = "rusa-perm-visuals"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "beautifulsoup4>=4.14.2",
+    "dlt>=1.18.2",
+    "requests>=2.32.5",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.6",
+]
+
+[tool.ruff.lint]
+select = ["ALL"]
