@@ -1,34 +1,38 @@
-from typing import TypedDict
 from pydantic import BaseModel
 import functools
 import logging
 import re
-from collections import defaultdict
-
+import requests
 from bs4 import BeautifulSoup
-from dlt.sources.helpers import requests
 
 logger = logging.getLogger(__name__)
 
-# pipeline = dlt.pipeline(
-#     pipeline_name='rusa yearly results',
-#     destination='duckdb',
-#     dataset_name='rusa'
-# )
-
 class Member(BaseModel):
     id: int
-    name: str
+    names: set[str]
+    years: set[int]
+
+    def __init__(self, id: int, name: str, year: int):
+        super().__init__(id=id, names={name}, years={year})
 
     def __hash__(self):
-        return self.id.__hash__() + self.name.__hash__()
+        return self.id.__hash__()
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def add_name(self, name):
+        self.names.add(name)
+
+    def add_year(self, year):
+        self.years.add(year)
 
 def find_rusa_members():
-    rusa_ids = defaultdict(set)
-    years = range(1999, 2001)
-    # years = range(1999, 2025)
+    rusa_members = dict()
+    years = range(1999, 2025)
 
     for year in years:
+        print(f"Requesting yearly data for {year} ...")
         response = requests.get(f"https://rusa.org/yearly{year}.html")
         response.raise_for_status()
 
@@ -38,13 +42,18 @@ def find_rusa_members():
             cell = row.find("td")
             if cell:
                 if (
-                    rusa_id := re.search(r"([\w\, ]+) \((\d+)\)", cell.text)
-                ) and rusa_id is not None:
-                    rusa_ids[year].add(Member(id=rusa_id[2], name=rusa_id[1]))
+                    parsed := re.search(r"([\w\, ]+) \((\d+)\)", cell.text)
+                ) and parsed is not None:
+                    id = parsed[2]
+                    name = parsed[1]
 
-    all_ids = functools.reduce(
-        lambda total, year: total.union(year), rusa_ids.values(), set(),
-    )
-    print(f"Found {len(all_ids)} total RUSA members across {len(years)} years")
+                    member = Member(id, name, year)
+                    if member.id not in rusa_members:
+                        rusa_members[member.id] = member
+                    else:
+                        member = rusa_members[member.id]
+                        member.add_name(name)
+                        member.add_year(year)
 
-    return rusa_ids
+    print(f"Found {len(rusa_members)} total RUSA members across {len(years)} years")
+    return rusa_members
