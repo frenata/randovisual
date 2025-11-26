@@ -20,3 +20,13 @@ async def extract_year(year: int, db=Depends(get_db)) -> int:
     )
     db.execute(stmt)
     return len(members)
+
+
+@router.get("/rusa/rider/{rider}")
+async def extract_year(rid: int, db=Depends(get_db)) -> int:
+    rider = Member(rider, "", 2000)
+    rides = rusa.find_rider_results(rider)
+    stmt = psql.insert(Ride).values(list(vars(ride) for ride in rides))
+    stmt = stmt.on_conflict_do_nothing( index_elements=['id', "date", "duration"])
+    db.execute(stmt)
+    return len(rides)

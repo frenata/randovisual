@@ -31,9 +31,9 @@ class Member(BaseModel):
 
 class Ride(BaseModel):
     id: int
-    link: str
+    # link: str
     date: datetime.date
-    duration: datetime.timedelta
+    duration: int
 
 def find_rusa_members(year: int):
     rusa_members = dict()
@@ -89,7 +89,7 @@ def parse_ride(tag):
             return None
         permid = int(re.search(r'permid=(\d+)', route_link).group(1))
 
-        ride = Ride(id=permid, link=route_link, date=date, duration=duration)
+        ride = Ride(id=permid, date=date, duration=duration.minutes)
         # breakpoint()
         pass
         return ride
