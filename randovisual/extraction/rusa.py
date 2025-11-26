@@ -34,6 +34,7 @@ class Ride(BaseModel):
     # link: str
     date: datetime.date
     duration: int
+    rider_id: int
 
 def find_rusa_members(year: int):
     rusa_members = dict()
@@ -64,7 +65,7 @@ def find_rusa_members(year: int):
     logger.info(f"Found {len(rusa_members)} total RUSA members in {year} ride data.")
     return rusa_members
 
-def parse_ride(tag):
+def parse_ride(rider_id, tag):
     """
     <tr class="individual-ride-result">
     <td align="left">RUSA-T132670</td>
@@ -89,7 +90,7 @@ def parse_ride(tag):
             return None
         permid = int(re.search(r'permid=(\d+)', route_link).group(1))
 
-        ride = Ride(id=permid, date=date, duration=duration.minutes)
+        ride = Ride(id=permid, date=date, duration=duration.total_seconds() / 60, rider_id=rider_id )
         # breakpoint()
         pass
         return ride
@@ -112,4 +113,5 @@ def find_rider_results(member: Member):
 
     html = BeautifulSoup(response.text, features="html.parser")
     results = html.select("tr.individual-ride-result")
-    rides = list(filter(bool, map(parse_ride, results)))
+    rides = list(filter(bool, map(functools.partial(parse_ride, member.id), results)))
+    return rides

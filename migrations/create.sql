@@ -5,6 +5,6 @@ create table if not exists ride (
 	id int,
 	date date,
 	duration int,
-	rider_id int,
-	primary key (id, date, duration)
+	rider_id int references rusa_member (id),
+	primary key (id, date, duration, rider_id)
 );

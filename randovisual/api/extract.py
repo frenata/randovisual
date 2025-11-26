@@ -1,6 +1,6 @@
 from fastapi import Depends, APIRouter
 import randovisual.extraction.rusa as rusa
-from randovisual.db.member import Member
+from randovisual.db.member import Member, Ride
 from randovisual.api.db import get_db
 import sqlalchemy as sql
 import sqlalchemy.dialects.postgresql as psql
@@ -22,11 +22,15 @@ async def extract_year(year: int, db=Depends(get_db)) -> int:
     return len(members)
 
 
-@router.get("/rusa/rider/{rider}")
-async def extract_year(rid: int, db=Depends(get_db)) -> int:
-    rider = Member(rider, "", 2000)
+@router.get("/rusa/rider/{rid}")
+async def extract_rides(rid: int, db=Depends(get_db)) -> int:
+    rider = rusa.Member(rid, "", 2000)
+    # breakpoint()
     rides = rusa.find_rider_results(rider)
-    stmt = psql.insert(Ride).values(list(vars(ride) for ride in rides))
-    stmt = stmt.on_conflict_do_nothing( index_elements=['id', "date", "duration"])
-    db.execute(stmt)
-    return len(rides)
+    breakpoint()
+    if rides is not None:
+        stmt = psql.insert(Ride).values(list(vars(ride) for ride in rides))
+        stmt = stmt.on_conflict_do_nothing( index_elements=['id', "date", "duration", "rider_id"])
+        db.execute(stmt)
+        return len(rides)
+    return 0
