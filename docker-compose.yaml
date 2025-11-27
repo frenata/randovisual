@@ -8,3 +8,10 @@ services:
       POSTGRES_USER: rusa
     volumes:
       - ./data/postgres:/var/lib/postgresql
+  tiler:
+    image: pramsey/pg_tileserv
+    ports:
+      - "7800:7800"
+    environment:
+      DATABASE_URL:
+        postgres://rusa:rusa@db/rusa
