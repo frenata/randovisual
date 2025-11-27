@@ -1,3 +1,4 @@
+import os
 import datetime
 from pydantic import BaseModel
 import functools
@@ -5,6 +6,9 @@ import logging
 import re
 import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +34,7 @@ class Member(BaseModel):
 
 
 class Ride(BaseModel):
-    id: int
+    rusa_id: int
     # link: str
     date: datetime.date
     duration: int
@@ -90,7 +94,7 @@ def parse_ride(rider_id, tag):
             return None
         permid = int(re.search(r'permid=(\d+)', route_link).group(1))
 
-        ride = Ride(id=permid, date=date, duration=duration.total_seconds() / 60, rider_id=rider_id )
+        ride = Ride(rusa_id=permid, date=date, duration=duration.total_seconds() / 60, rider_id=rider_id )
         # breakpoint()
         pass
         return ride
@@ -115,3 +119,21 @@ def find_rider_results(member: Member):
     results = html.select("tr.individual-ride-result")
     rides = list(filter(bool, map(functools.partial(parse_ride, member.id), results)))
     return rides
+
+
+def get_route_info(route_id):
+    response = requests.get(f"https://rusa.org/cgi-bin/permview_GF.pl?permid={route_id}")
+    response.raise_for_status()
+    html = BeautifulSoup(response.text, features="html.parser")
+    rwgps = html.find(lambda tag: tag.name == "a" and "ridewithgps" in tag.attrs.get("href", ""))
+    if rwgps is None:
+        return None
+
+    rwgps_id = rwgps.attrs["href"].split("/")[-1]
+    response = requests.get(f"https://ridewithgps.com/api/v1/routes/{rwgps_id}.json", headers={"x-rwgps-api-key": os.getenv("RWGPS_API_KEY"), "x-rwgps-auth-token": os.getenv("RWGPS_API_TOKEN")})
+    response.raise_for_status()
+
+    points = ','.join(f'{p["x"]} {p["y"]} {p["e"]}' for p in response.json().get("route").get("track_points"))
+    geometry = f"LINESTRING Z({points})"
+    # breakpoint()
+    return {"rusa_id": route_id, "rwgps_id": rwgps_id, "geometry": geometry}

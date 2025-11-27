@@ -1,6 +1,6 @@
 from fastapi import Depends, APIRouter
 import randovisual.extraction.rusa as rusa
-from randovisual.db.member import Member, Ride
+from randovisual.db.member import Member, Ride, Route
 from randovisual.api.db import get_db
 import sqlalchemy as sql
 import sqlalchemy.dialects.postgresql as psql
@@ -27,10 +27,26 @@ async def extract_rides(rid: int, db=Depends(get_db)) -> int:
     rider = rusa.Member(rid, "", 2000)
     # breakpoint()
     rides = rusa.find_rider_results(rider)
-    breakpoint()
     if rides is not None:
         stmt = psql.insert(Ride).values(list(vars(ride) for ride in rides))
-        stmt = stmt.on_conflict_do_nothing( index_elements=['id', "date", "duration", "rider_id"])
+        stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id', "date", "duration", "rider_id"])
         db.execute(stmt)
-        return len(rides)
-    return 0
+
+    for ride in rides:
+        route = rusa.get_route_info(ride.rusa_id)
+        stmt = psql.insert(Route).values(route)
+        stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id'])
+        db.execute(stmt)
+
+    return len(rides)
+
+
+@router.get("/rusa/route/{rid}")
+async def extract_route(rid: int, db=Depends(get_db)):
+    # breakpoint()
+    route = rusa.get_route_info(rid)
+    if route is not None:
+        stmt = psql.insert(Route).values(route)
+        # stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id', "date", "duration", "rider_id"])
+        db.execute(stmt)
+        return True

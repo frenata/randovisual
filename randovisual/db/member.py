@@ -1,4 +1,5 @@
 import datetime
+from geoalchemy2 import Geometry
 from randovisual.db import Base
 from typing import List
 from typing import Optional
@@ -18,7 +19,14 @@ class Member(Base):
 
 class Ride(Base):
     __tablename__ = "ride"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    rusa_id: Mapped[int] = mapped_column(primary_key=True)
     duration: Mapped[int] = mapped_column(primary_key=True)
     date: Mapped[datetime.date] = mapped_column(primary_key=True)
     rider_id: Mapped[int] = mapped_column(primary_key=True)
+
+
+class Route(Base):
+    __tablename__ = "route"
+    rusa_id: Mapped[int] = mapped_column(primary_key=True)
+    rwgps_id: Mapped[int] = mapped_column()
+    geometry: Mapped[Geometry] = mapped_column(Geometry('GEOMETRY', srid=4326))
