@@ -16,11 +16,11 @@
   <div id="info">Year: <span id="year"></span></div>
 
   <script>
-    const { DeckGL, MVTLayer } = deck;
+    const { DeckGL, MVTLayer, TileLayer, BitmapLayer } = deck;
 
     // Get year from URL parameter, default to 2024
     const urlParams = new URLSearchParams(window.location.search);
-    const year = urlParams.get('year') || '2024';
+    const year = urlParams.get('year') || '9999';
     document.getElementById('year').textContent = year;
 
     // Initialize deck.gl
@@ -35,6 +35,26 @@
       },
       controller: true,
       layers: [
+        new TileLayer({
+          id: 'osm-basemap',
+          data: 'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          minZoom: 0,
+          maxZoom: 19,
+          tileSize: 256,
+          maxRequests: 10,
+          renderSubLayers: props => {
+                  const {
+                    bbox: {west, south, east, north}
+                  } = props.tile;
+    
+                  return new BitmapLayer({
+                    id: `${props.id}-bitmap`,
+                    image: props.data,
+                    bounds: [west, south, east, north]
+                  });
+                }
+        }),
+
         new MVTLayer({
           id: 'routes',
           data: `http://localhost:7800/public.ride_routes/{z}/{x}/{y}.pbf?year=${year}`,

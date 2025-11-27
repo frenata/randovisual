@@ -19,7 +19,10 @@ BEGIN
     JOIN ride
 	on  route.rusa_id = ride.rusa_id
     WHERE 1=1
-      AND date_part('year', date)::integer = year --_filter
+      AND CASE
+        WHEN year = '9999' THEN true
+        ELSE date_part('year', date)::integer = year
+      END
       AND ST_Transform(geometry, 3857) && ST_TileEnvelope(z, x, y)
     GROUP BY route.rusa_id, geometry
   ) AS tile;

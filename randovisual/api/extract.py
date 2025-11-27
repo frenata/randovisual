@@ -27,16 +27,18 @@ async def extract_rides(rid: int, db=Depends(get_db)) -> int:
     rider = rusa.Member(rid, "", 2000)
     # breakpoint()
     rides = rusa.find_rider_results(rider)
-    if rides is not None:
+    # breakpoint()
+    if rides:
         stmt = psql.insert(Ride).values(list(vars(ride) for ride in rides))
         stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id', "date", "duration", "rider_id"])
         db.execute(stmt)
 
     for ride in rides:
         route = rusa.get_route_info(ride.rusa_id)
-        stmt = psql.insert(Route).values(route)
-        stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id'])
-        db.execute(stmt)
+        if route is not None:
+            stmt = psql.insert(Route).values(route)
+            stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id'])
+            db.execute(stmt)
 
     return len(rides)
 
