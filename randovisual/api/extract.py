@@ -4,6 +4,9 @@ from randovisual.db.member import Member, Ride, Route
 from randovisual.api.db import get_db
 import sqlalchemy as sql
 import sqlalchemy.dialects.postgresql as psql
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/extract")
 
@@ -44,11 +47,19 @@ async def extract_rides(rid: int, db=Depends(get_db)) -> int:
 
 
 @router.get("/rusa/route/{rid}")
-async def extract_route(rid: int, db=Depends(get_db)):
-    # breakpoint()
-    route = rusa.get_route_info(rid)
-    if route is not None:
-        stmt = psql.insert(Route).values(route)
-        # stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id', "date", "duration", "rider_id"])
-        db.execute(stmt)
+async def extract_route(rid: int, force: bool=False, db=Depends(get_db)):
+    route_ = db.execute(sql.select(Route).where(Route.rusa_id == rid)).one_or_none()
+    if route_ is not None and force is False:
+        logger.info("already have route, skipping")
+        return False
+    elif route_ is not None and force is True:
+        logger.info("already have route, enriching")
+        route = rusa.get_route_info(rid, route_)
+        # TODO: update existing route with new data
         return True
+    else:
+        route = rusa.get_route_info(rid)
+        if route is not None:
+            stmt = psql.insert(Route).values(route)
+            db.execute(stmt)
+            return True

@@ -35,7 +35,6 @@ class Member(BaseModel):
 
 class Ride(BaseModel):
     rusa_id: int
-    # link: str
     date: datetime.date
     duration: int
     rider_id: int
@@ -121,19 +120,32 @@ def find_rider_results(member: Member):
     return rides
 
 
-def get_route_info(route_id):
-    response = requests.get(f"https://rusa.org/cgi-bin/permview_GF.pl?permid={route_id}")
-    response.raise_for_status()
-    html = BeautifulSoup(response.text, features="html.parser")
-    rwgps = html.find(lambda tag: tag.name == "a" and "ridewithgps" in tag.attrs.get("href", ""))
-    if rwgps is None:
-        return None
-
-    rwgps_id = rwgps.attrs["href"].split("/")[-1]
+def get_rwgps_info(rwgps_id):
     response = requests.get(f"https://ridewithgps.com/api/v1/routes/{rwgps_id}.json", headers={"x-rwgps-api-key": os.getenv("RWGPS_API_KEY"), "x-rwgps-auth-token": os.getenv("RWGPS_API_TOKEN")})
     response.raise_for_status()
 
     points = ','.join(f'{p["x"]} {p["y"]} {p["e"]}' for p in response.json().get("route").get("track_points"))
     geometry = f"LINESTRING Z({points})"
-    # breakpoint()
-    return {"rusa_id": route_id, "rwgps_id": rwgps_id, "geometry": geometry}
+    return geometry
+
+
+def get_route_info(route_id, existing_route):
+    response = requests.get(f"https://rusa.org/cgi-bin/permview_GF.pl?permid={route_id}")
+    response.raise_for_status()
+    html = BeautifulSoup(response.text, features="html.parser")
+
+    rwgps = html.find(lambda tag: tag.name == "a" and "ridewithgps" in tag.attrs.get("href", ""))
+    name = html.select_one("table > tr:nth-child(2) > td").text
+    climbing = int(html.select_one("table > tr:nth-child(6) > td").text)
+
+    response = {"rusa_id": route_id, "name": name, "climbing": climbing}
+
+    if rwgps is None:
+        return None
+    if existing_route.geometry is None:
+        rwgps_id = rwgps.attrs["href"].split("/")[-1]
+        geometry = get_rwgps_info(rwgps_id)
+        response["geometry"] = geometry
+        response["rwgps_id"] = rwgps_id
+
+    return response

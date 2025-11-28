@@ -30,3 +30,5 @@ class Route(Base):
     rusa_id: Mapped[int] = mapped_column(primary_key=True)
     rwgps_id: Mapped[int] = mapped_column()
     geometry: Mapped[Geometry] = mapped_column(Geometry('GEOMETRY', srid=4326))
+    name: Mapped[str] = mapped_column(Text)
+    climbing: Mapped[int] = mapped_column(Integer)
