@@ -1,3 +1,4 @@
+import functools
 from fastapi import Depends, APIRouter
 import randovisual.extraction.rusa as rusa
 from randovisual.db.member import Member, Ride, Route
@@ -27,6 +28,8 @@ async def extract_year(year: int, db=Depends(get_db)) -> int:
 
 @router.get("/rusa/rider/{rid}")
 async def extract_rides(rid: int, db=Depends(get_db)) -> int:
+    # TODO: handle gracefully whether the rider doesn't exist? 
+    # should probably just go fetch them
     rider = rusa.Member(rid, "", 2000)
     # breakpoint()
     rides = rusa.find_rider_results(rider)
@@ -36,21 +39,15 @@ async def extract_rides(rid: int, db=Depends(get_db)) -> int:
         stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id', "date", "duration", "rider_id"])
         db.execute(stmt)
 
-    for ride in rides:
-        route = rusa.get_route_info(ride.rusa_id)
-        if route is not None:
-            stmt = psql.insert(Route).values(route)
-            stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id'])
-            db.execute(stmt)
+    extracted = functools.reduce(lambda count, x: count + 1 if x else count, map(functools.partial(_extract_route, force=False, db=db), (ride.rusa_id for ride in rides)), 0)
 
-    return len(rides)
+    return extracted
 
 
-@router.get("/rusa/route/{rid}")
-async def extract_route(rid: int, force: bool=False, db=Depends(get_db)):
+def _extract_route(rid: int, *, force: bool, db):
     route_ = db.execute(sql.select(Route).where(Route.rusa_id == rid)).one_or_none()
     if route_ is not None and force is False:
-        logger.info("already have route, skipping")
+        logger.warn("already have route, skipping")
         return False
     elif route_ is not None and force is True:
         logger.info("already have route, enriching")
@@ -66,3 +63,8 @@ async def extract_route(rid: int, force: bool=False, db=Depends(get_db)):
             stmt = psql.insert(Route).values(route)
             db.execute(stmt)
             return True
+
+
+@router.get("/rusa/route/{rid}")
+async def extract_route(rid: int, force: bool=False, db=Depends(get_db)):
+    return _extract_route(rid, force=force, db=db)
