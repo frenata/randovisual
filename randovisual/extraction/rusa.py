@@ -144,8 +144,12 @@ def get_route_info(route_id, existing_route = None):
         return None
     if existing_route is None or existing_route.geometry is None:
         rwgps_id = rwgps.attrs["href"].split("/")[-1]
-        geometry = get_rwgps_info(rwgps_id)
-        response["geometry"] = geometry
-        response["rwgps_id"] = rwgps_id
+        try:
+            geometry = get_rwgps_info(rwgps_id)
+            response["geometry"] = geometry
+            response["rwgps_id"] = rwgps_id
+        except Exception:
+            # NOTE: if rwgps fails, we'll capture the data we have
+            logger.exception("failed to extract from rwgps")
 
     return response
