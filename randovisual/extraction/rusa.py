@@ -129,7 +129,7 @@ def get_rwgps_info(rwgps_id):
     return geometry
 
 
-def get_route_info(route_id, existing_route):
+def get_route_info(route_id, existing_route = None):
     response = requests.get(f"https://rusa.org/cgi-bin/permview_GF.pl?permid={route_id}")
     response.raise_for_status()
     html = BeautifulSoup(response.text, features="html.parser")
@@ -142,7 +142,7 @@ def get_route_info(route_id, existing_route):
 
     if rwgps is None:
         return None
-    if existing_route.geometry is None:
+    if existing_route is None or existing_route.geometry is None:
         rwgps_id = rwgps.attrs["href"].split("/")[-1]
         geometry = get_rwgps_info(rwgps_id)
         response["geometry"] = geometry

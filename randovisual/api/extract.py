@@ -55,7 +55,10 @@ async def extract_route(rid: int, force: bool=False, db=Depends(get_db)):
     elif route_ is not None and force is True:
         logger.info("already have route, enriching")
         route = rusa.get_route_info(rid, route_)
-        # TODO: update existing route with new data
+        stmt = psql.insert(Route).values(route)
+        route.pop("rusa_id")
+        stmt = stmt.on_conflict_do_update( index_elements = ["rusa_id"], set_=route)
+        db.execute(stmt)
         return True
     else:
         route = rusa.get_route_info(rid)
