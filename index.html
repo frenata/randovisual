@@ -18,7 +18,7 @@
 
   <script>
     const { DeckGL, MVTLayer, TileLayer, BitmapLayer } = deck;
-    const { scaleSequential, interpolateViridis } = d3;
+    const { scaleSequential, interpolateViridis, interpolateTurbo } = d3;
 
     const hexToRgb = hex =>
       hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
@@ -72,7 +72,7 @@
           // Debugging: Log ride_count values to see if they're correct
           getLineColor: d => {
             const count = d.properties.ride_count || 1;
-            console.log(`ride_count: ${count}`); // Log to check ride_count
+            // console.log(`ride_count: ${count}`); // Log to check ride_count
             const colorMap = scaleSequential(interpolateViridis).domain([1,25]);
             const color = colorMap(count+5);
             return hexToRgb(color);
