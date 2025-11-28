@@ -35,30 +35,36 @@ async def extract_rides(rid: int, db=Depends(get_db)) -> int:
     rides = rusa.find_rider_results(rider)
     # breakpoint()
     if rides:
-        stmt = psql.insert(Ride).values(list(vars(ride) for ride in rides))
+        rides_no_category = [{k:v for k,v in vars(ride).items() if k not in ["category", "name"]} for ride in rides]
+        stmt = psql.insert(Ride).values(rides_no_category)
         stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id', "date", "duration", "rider_id"])
         db.execute(stmt)
 
-    extracted = functools.reduce(lambda count, x: count + 1 if x else count, map(functools.partial(_extract_route, force=False, db=db), (ride.rusa_id for ride in rides)), 0)
+    count = 0
+    for ride in rides:
+        extracted = _extract_route(ride.rusa_id, ride.name, ride.category, force=False, db=db)
+        if extracted:
+            count += 1
+    # extracted = functools.reduce(lambda count, x: count + 1 if x else count, map(functools.partial(_extract_route, force=False, db=db), ((ride.rusa_id, ride.category) for ride in rides)), 0)
 
     return extracted
 
 
-def _extract_route(rid: int, *, force: bool, db):
+def _extract_route(rid: int, name: str | None = None, category: str | None = None, *, force: bool, db):
     route_ = db.execute(sql.select(Route).where(Route.rusa_id == rid)).one_or_none()
     if route_ is not None and force is False:
         logger.warn("already have route, skipping")
         return False
     elif route_ is not None and force is True:
         logger.info("already have route, enriching")
-        route = rusa.get_route_info(rid, route_)
+        route = rusa.get_route_info(rid, name, category, route_)
         stmt = psql.insert(Route).values(route)
         route.pop("rusa_id")
         stmt = stmt.on_conflict_do_update( index_elements = ["rusa_id"], set_=route)
         db.execute(stmt)
         return True
     else:
-        route = rusa.get_route_info(rid)
+        route = rusa.get_route_info(rid, name, category)
         if route is not None:
             stmt = psql.insert(Route).values(route)
             db.execute(stmt)

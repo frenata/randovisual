@@ -32,3 +32,4 @@ class Route(Base):
     geometry: Mapped[Geometry] = mapped_column(Geometry('GEOMETRY', srid=4326))
     name: Mapped[str] = mapped_column(Text)
     climbing: Mapped[int] = mapped_column(Integer)
+    category: Mapped[str] = mapped_column(Text)
