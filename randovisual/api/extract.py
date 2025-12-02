@@ -45,9 +45,8 @@ async def extract_rides(rid: int, db=Depends(get_db)) -> int:
         extracted = _extract_route(ride.rusa_id, ride.name, ride.category, force=False, db=db)
         if extracted:
             count += 1
-    # extracted = functools.reduce(lambda count, x: count + 1 if x else count, map(functools.partial(_extract_route, force=False, db=db), ((ride.rusa_id, ride.category) for ride in rides)), 0)
 
-    return extracted
+    return count
 
 
 def _extract_route(rid: int, name: str | None = None, category: str | None = None, *, force: bool, db):
