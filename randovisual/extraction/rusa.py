@@ -163,7 +163,7 @@ def _get_perm_info(route_id, category, existing_route = None):
     return response
 
 
-def _get_brevet_info(route_id, name: str, category: str, existing_route = None):
+def _get_brevet_info(route_id, name: str, category: str, rwgps_id: str | None = None):
     response = requests.get(f"https://rusa.org/cgi-bin/routesearch_PF.pl?rtid={route_id}")
     response.raise_for_status()
     html = BeautifulSoup(response.text, features="html.parser")
@@ -176,10 +176,15 @@ def _get_brevet_info(route_id, name: str, category: str, existing_route = None):
     except:
         logger.info("no climbing data found")
 
+    if rwgps_id is not None:
+        geometry = get_rwgps_info(rwgps_id)
+        response["geometry"] = geometry
+        response["rwgps_id"] = rwgps_id
+
     return response
 
-def get_route_info(route_id, name: str, category: str, existing_route = None):
+def get_route_info(route_id, name: str, category: str, *, existing_route = None, rwgps_id: str | None = None):
     if category in ["RUSAT", "ACPT-SR6"]:
         return _get_perm_info(route_id, category, existing_route)
     else:
-        return _get_brevet_info(route_id, name, category, existing_route)
+        return _get_brevet_info(route_id, name, category, rwgps_id)
