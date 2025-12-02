@@ -1,13 +1,13 @@
 services:
-  db:
-    image: postgis/postgis:18-3.6
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_PASSWORD: rusa
-      POSTGRES_USER: rusa
-    volumes:
-      - ./data/postgres:/var/lib/postgresql
+  # db:
+  #   image: postgis/postgis:18-3.6
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_PASSWORD: rusa
+  #     POSTGRES_USER: rusa
+  #   volumes:
+  #     - ./data/postgres:/var/lib/postgresql
   tiler:
     image: pramsey/pg_tileserv
     ports:
@@ -16,5 +16,16 @@ services:
       - .env
     volumes:
       - ./pg_tileserv.toml:/config/pg_tileserv.toml
-      # DATABASE_URL:
-      #   postgres://rusa:rusa@db/rusa
+  api:
+    build:
+      context: .
+      dockerfile: randovisual/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+  fe:
+    build:
+      context: fe
+    ports:
+      - "8181:80"
