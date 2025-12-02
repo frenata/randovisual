@@ -35,22 +35,22 @@ async def extract_rides(rid: int, db=Depends(get_db)) -> int:
     rides = rusa.find_rider_results(rider)
     # breakpoint()
     if rides:
-        rides_no_category = [{k:v for k,v in vars(ride).items() if k not in ["category", "name"]} for ride in rides]
-        stmt = psql.insert(Ride).values(rides_no_category)
-        stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id', "date", "duration", "rider_id"])
+        rides_no_name = [{k:v for k,v in vars(ride).items() if k not in ["name"]} for ride in rides]
+        stmt = psql.insert(Ride).values(rides_no_name)
+        stmt = stmt.on_conflict_do_nothing( index_elements=['rusa_id', "category", "date", "duration", "rider_id"])
         db.execute(stmt)
 
     count = 0
     for ride in rides:
-        extracted = _extract_route(ride.rusa_id, ride.name, ride.category, force=False, db=db)
+        extracted = _extract_route(ride.rusa_id, ride.name, category=ride.category, force=False, db=db)
         if extracted:
             count += 1
 
     return count
 
 
-def _extract_route(rid: int, name: str | None = None, category: str | None = None, *, force: bool, db):
-    route_ = db.execute(sql.select(Route).where(Route.rusa_id == rid)).one_or_none()
+def _extract_route(rid: int, name: str | None = None, *, category: str, force: bool, db):
+    route_ = db.execute(sql.select(Route).where(Route.rusa_id == rid).where(Route.category == category)).one_or_none()
     if route_ is not None and force is False:
         logger.warn("already have route, skipping")
         return False
@@ -70,6 +70,6 @@ def _extract_route(rid: int, name: str | None = None, category: str | None = Non
             return True
 
 
-@router.get("/rusa/route/{rid}")
+@router.get("/rusa/route/perm/{rid}")
 async def extract_route(rid: int, force: bool=False, db=Depends(get_db)):
-    return _extract_route(rid, force=force, db=db)
+    return _extract_route(rid, category="RUSAT", force=force, db=db)

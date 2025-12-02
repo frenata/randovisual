@@ -18,6 +18,7 @@ BEGIN
     FROM route
     JOIN ride
 	on  route.rusa_id = ride.rusa_id
+	AND route.category = ride.category
     WHERE 1=1
       AND CASE
         WHEN year = '9999' THEN true

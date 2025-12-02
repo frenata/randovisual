@@ -23,6 +23,7 @@ class Ride(Base):
     duration: Mapped[int] = mapped_column(primary_key=True)
     date: Mapped[datetime.date] = mapped_column(primary_key=True)
     rider_id: Mapped[int] = mapped_column(primary_key=True)
+    category: Mapped[str] = mapped_column(primary_key=True)
 
 
 class Route(Base):
@@ -32,4 +33,4 @@ class Route(Base):
     geometry: Mapped[Geometry] = mapped_column(Geometry('GEOMETRY', srid=4326))
     name: Mapped[str] = mapped_column(Text)
     climbing: Mapped[int] = mapped_column(Integer)
-    category: Mapped[str] = mapped_column(Text)
+    category: Mapped[str] = mapped_column(Text, primary_key=True)
