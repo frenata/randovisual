@@ -24,7 +24,7 @@ BEGIN
         WHEN year = '9999' THEN true
         ELSE date_part('year', date)::integer = year
       END
-      AND ST_Transform(geometry, 3857) && ST_TileEnvelope(z, x, y)
+      AND geometry && ST_Transform(ST_TileEnvelope(z, x, y), 4326)
     GROUP BY route.rusa_id, geometry
   ) AS tile;
 END;
