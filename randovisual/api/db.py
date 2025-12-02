@@ -1,5 +1,6 @@
 import sqlalchemy
 import psycopg
+import os
 
 DB_CONFIG = {
     "host": "localhost",
@@ -10,6 +11,6 @@ DB_CONFIG = {
 }
 
 def get_db():
-    engine = sqlalchemy.create_engine("postgresql+psycopg://rusa:rusa@localhost/rusa")
+    engine = sqlalchemy.create_engine(os.getenv("DB_URL_SERVER"))
     with engine.begin() as conn:
         yield conn

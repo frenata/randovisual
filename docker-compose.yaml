@@ -12,6 +12,7 @@ services:
     image: pramsey/pg_tileserv
     ports:
       - "7800:7800"
-    environment:
-      DATABASE_URL:
-        postgres://rusa:rusa@db/rusa
+    env_file:
+      - .env
+      # DATABASE_URL:
+      #   postgres://rusa:rusa@db/rusa
