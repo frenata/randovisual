@@ -14,5 +14,7 @@ services:
       - "7800:7800"
     env_file:
       - .env
+    volumes:
+      - ./pg_tileserv.toml:/config/pg_tileserv.toml
       # DATABASE_URL:
       #   postgres://rusa:rusa@db/rusa
