@@ -85,24 +85,28 @@ def parse_ride(rider_id, tag):
     """
 
     try:
+        name = tag.select_one("td:nth-child(6)").text
         category = tag.select_one("td:nth-child(2)").text
         date = datetime.date.strptime(tag.select_one("td:nth-child(4)").text, "%Y/%m/%d")
         time = re.search(r'(\d+):(\d+)', tag.select_one("td:nth-child(7)").text)
         duration = datetime.timedelta(hours=int(time.group(1)), minutes=int(time.group(2)))
-        route_link = f"https://rusa.org{tag.select_one("td:nth-child(6) > a").attrs["href"]}"
-        name = tag.select_one("td:nth-child(6)").text
 
-        if "permid" in route_link:
-            rusa_id = int(re.search(r'permid=(\d+)', route_link).group(1))
-        elif "rtid" in route_link:
-            rusa_id = int(re.search(r'rtid=(\d+)', route_link).group(1))
+        if name == "Paris-Brest-Paris":
+            rusa_id = 999999
         else:
-            raise ValueError(f"unknown route link type: {route_link} for rider: {rider_id}")
+            route_link = f"https://rusa.org{tag.select_one("td:nth-child(6) > a").attrs["href"]}"
+
+            if "permid" in route_link:
+                rusa_id = int(re.search(r'permid=(\d+)', route_link).group(1))
+            elif "rtid" in route_link:
+                rusa_id = int(re.search(r'rtid=(\d+)', route_link).group(1))
+            else:
+                raise ValueError(f"unknown route link type: {route_link} for rider: {rider_id}")
 
         ride = Ride(rusa_id=rusa_id, date=date, duration=duration.total_seconds() / 60, rider_id=rider_id, category=category, name=name)
         return ride
     except:
-        logger.exception("error parsing ride result")
+        logger.error("error parsing ride result")
         return None
 
 
@@ -133,7 +137,7 @@ def get_rwgps_info(rwgps_id):
     return geometry
 
 
-def _get_perm_info(route_id, existing_route = None):
+def _get_perm_info(route_id, category, existing_route = None):
     response = requests.get(f"https://rusa.org/cgi-bin/permview_GF.pl?permid={route_id}")
     response.raise_for_status()
     html = BeautifulSoup(response.text, features="html.parser")
@@ -170,12 +174,12 @@ def _get_brevet_info(route_id, name: str, category: str, existing_route = None):
         # NOTE: brevets only show climbing in ft, so we convert to m
         response["climbing"] = int(climbing / 3.281)
     except:
-        logger.warn("no climbing data found")
+        logger.info("no climbing data found")
 
     return response
 
 def get_route_info(route_id, name: str, category: str, existing_route = None):
     if category in ["RUSAT", "ACPT-SR6"]:
-        return _get_perm_info(route_id, existing_route)
+        return _get_perm_info(route_id, category, existing_route)
     else:
         return _get_brevet_info(route_id, name, category, existing_route)
