@@ -12,16 +12,19 @@ auth:
 build-api:
     docker build -t {{REGISTRY}}/api:latest -f randovisual/Dockerfile .
     docker push {{REGISTRY}}/api:latest
+    gcloud run services update randovisual-api --region={{REGION}} --image={{REGISTRY}}/api:latest
 
 # Build and push FE image
 build-fe:
     cd fe && docker build -t {{REGISTRY}}/fe:latest .
     docker push {{REGISTRY}}/fe:latest
+    gcloud run services update randovisual-fe --region={{REGION}} --image={{REGISTRY}}/fe:latest
 
 # Build and push tiler image
 build-tiler:
     cd tiler && docker build -t {{REGISTRY}}/tiler:latest .
     docker push {{REGISTRY}}/tiler:latest
+    gcloud run services update randovisual-tiler --region={{REGION}} --image={{REGISTRY}}/tiler:latest
 
 # Build and push all images
 build-all: build-api build-fe build-tiler
