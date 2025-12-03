@@ -115,7 +115,7 @@ resource "google_cloud_run_v2_service" "tiler" {
     }
 
     containers {
-      image = "pramsey/pg_tileserv:latest"
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.main.repository_id}/tiler:latest"
 
       ports {
         container_port = 7800
@@ -253,12 +253,7 @@ resource "google_cloud_run_v2_service_iam_member" "tiler_public" {
   member   = "allUsers"
 }
 
-resource "google_cloud_run_v2_service_iam_member" "api_public" {
-  name     = google_cloud_run_v2_service.api.name
-  location = google_cloud_run_v2_service.api.location
-  role     = "roles/run.invoker"
-  member   = "allUsers"
-}
+# API is not publicly accessible - requires authentication
 
 resource "google_cloud_run_v2_service_iam_member" "fe_public" {
   name     = google_cloud_run_v2_service.fe.name

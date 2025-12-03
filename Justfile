@@ -25,3 +25,8 @@ build-tiler:
 
 # Build and push all images
 build-all: build-api build-fe build-tiler
+
+# Call authenticated API endpoint
+api endpoint:
+    @curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
+        $(cd infra && terraform output -raw api_url){{endpoint}}
