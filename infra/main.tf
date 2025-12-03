@@ -102,56 +102,6 @@ resource "google_secret_manager_secret_iam_member" "database_access" {
   member    = "serviceAccount:${google_service_account.cloudrun.email}"
 }
 
-# Cloud Run: Varnish Cache
-resource "google_cloud_run_v2_service" "cache" {
-  name     = "${var.app_name}-cache"
-  location = var.region
-
-  template {
-    service_account = google_service_account.cloudrun.email
-
-    scaling {
-      min_instance_count = 0
-      max_instance_count = 4
-    }
-
-    containers {
-      image = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.main.repository_id}/cache:latest"
-
-      ports {
-        container_port = 80
-      }
-
-      env {
-        name  = "VARNISH_BACKEND_HOST"
-        value = replace(replace(google_cloud_run_v2_service.tiler.uri, "https://", ""), "/", "")
-      }
-
-      env {
-        name  = "VARNISH_BACKEND_PORT"
-        value = 7800
-      }
-
-      resources {
-        limits = {
-          cpu    = "1"
-          memory = "512Mi"
-        }
-        cpu_idle = true
-      }
-    }
-  }
-
-  depends_on = [google_project_service.run]
-}
-
-resource "google_cloud_run_v2_service_iam_member" "cache_public" {
-  name     = google_cloud_run_v2_service.cache.name
-  location = google_cloud_run_v2_service.cache.location
-  role     = "roles/run.invoker"
-  member   = "allUsers"
-}
-
 # Cloud Run: Tiler (pg_tileserv)
 resource "google_cloud_run_v2_service" "tiler" {
   name     = "${var.app_name}-tiler"
@@ -169,7 +119,7 @@ resource "google_cloud_run_v2_service" "tiler" {
       image = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.main.repository_id}/tiler:latest"
 
       ports {
-        container_port = 7800
+        container_port = 8080
       }
 
       env {
@@ -280,7 +230,7 @@ resource "google_cloud_run_v2_service" "fe" {
 
       env {
         name  = "TILER_URL"
-        value = google_cloud_run_v2_service.cache.uri
+        value = google_cloud_run_v2_service.tiler.uri
       }
 
       resources {
@@ -314,11 +264,6 @@ resource "google_cloud_run_v2_service_iam_member" "fe_public" {
 }
 
 # Outputs
-output "cache_url" {
-  description = "Cache service URL (use this for tiles)"
-  value       = google_cloud_run_v2_service.cache.uri
-}
-
 output "tiler_url" {
   description = "Tiler service URL"
   value       = google_cloud_run_v2_service.tiler.uri

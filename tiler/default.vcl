@@ -10,9 +10,7 @@ vcl 4.1;
 include "hit-miss.vcl";
 
 # import vmod_dynamic for better backend name resolution
-import dynamic;
 import std;
-import directors;
 
 # Before you configure anything, we just disable the backend to avoid
 # any mistake, but you can delete that line and uncomment the following
@@ -21,8 +19,8 @@ import directors;
 
 backend default {
    # NOTE: figure out how to inject this
-   .host = "34.143.78.2";
-   .port = "443";
+   .host = "localhost";
+   .port = "7800";
 }
 
 # we may not have ipv6 in a container, so we'll only contact backend using ipv4
@@ -45,8 +43,8 @@ sub vcl_recv {
 
 
 sub vcl_deliver {
-    # set resp.http.Access-Control-Allow-Origin = "*";
-    # set resp.http.Access-Control-Allow-Headers = "Content-Type, Authorization";
+    set resp.http.Access-Control-Allow-Origin = "*";
+    set resp.http.Access-Control-Allow-Headers = "Content-Type, Authorization";
 }
 
 sub vcl_synth {
