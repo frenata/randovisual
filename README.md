@@ -2,7 +2,7 @@
 
 Goal: extract perm (and brevet?) data over the years and visualize it on a map.
 
-<img width="2010" height="1098" alt="randovisual" src="https://github.com/user-attachments/assets/26d02875-fd9d-4e79-bd7e-601fd3853737" />
+<img width="2215" height="1239" alt="randovisual-2" src="https://github.com/user-attachments/assets/e72e5765-728f-4545-b0bd-50a7da5e48da" />
 
 TODO:
  - [x] capture further metadata about routes from rusa
