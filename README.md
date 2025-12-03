@@ -9,8 +9,9 @@ Roadmap:
  - [x] don't refetch from rwgps if we already have the route data
  - [x] move db to a serverless db
  - [x] deploy to cloud
- - [ ] poke RUSA about whether this is possible to do for brevets
  - [x] provide some basic on-click details about the routes
+ - [x] cache the tiler so we don't crush the db network egress
+ - [ ] poke RUSA about whether this is possible to do for brevets
  - [ ] provide some FE filtering
  - [ ] improve route info panel
  - [ ] use TripsLayer to show routes populate over time
