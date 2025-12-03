@@ -12,3 +12,4 @@ TODO:
  - [ ] poke RUSA about whether this is possible to do for brevets
  - [x] provide some basic on-click details about the routes
  - [ ] provide some FE filtering
+ - [ ] improve route info panel
