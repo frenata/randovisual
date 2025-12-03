@@ -9,7 +9,12 @@ BEGIN
   FROM (
     SELECT 
       route.rusa_id,
+      any_value(route.name) as name,
+      any_value(route.climbing) as climbing,
+      any_value(round(st_length(st_transform(route.geometry, 5070)) / 1000.0)) as distance,
       COUNT(*) as ride_count,
+      count(distinct rider_id) as rider_count,
+      round(min(ride.duration) / 60.0, 1) as fkt,
       ST_AsMVTGeom(
         ST_Transform(geometry, 3857),
         ST_TileEnvelope(z, x, y),
