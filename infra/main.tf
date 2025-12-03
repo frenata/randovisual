@@ -101,6 +101,56 @@ resource "google_secret_manager_secret_iam_member" "database_access" {
   member    = "serviceAccount:${google_service_account.cloudrun.email}"
 }
 
+# Cloud Run: Varnish Cache
+resource "google_cloud_run_v2_service" "cache" {
+  name     = "${var.app_name}-cache"
+  location = var.region
+
+  template {
+    service_account = google_service_account.cloudrun.email
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 4
+    }
+
+    containers {
+      image = "eeacms/varnish"
+
+      ports {
+        container_port = 80
+      }
+
+      env {
+        name  = "TILESERV_HOST"
+        value = replace(replace(google_cloud_run_v2_service.tiler.uri, "https://", ""), "/", "")
+      }
+
+      env {
+        name  = "CACHE_TTL"
+        value = "600"
+      }
+
+      resources {
+        limits = {
+          cpu    = "1"
+          memory = "512Mi"
+        }
+        cpu_idle = true
+      }
+    }
+  }
+
+  depends_on = [google_project_service.run]
+}
+
+resource "google_cloud_run_v2_service_iam_member" "cache_public" {
+  name     = google_cloud_run_v2_service.cache.name
+  location = google_cloud_run_v2_service.cache.location
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
 # Cloud Run: Tiler (pg_tileserv)
 resource "google_cloud_run_v2_service" "tiler" {
   name     = "${var.app_name}-tiler"
@@ -229,7 +279,7 @@ resource "google_cloud_run_v2_service" "fe" {
 
       env {
         name  = "TILER_URL"
-        value = google_cloud_run_v2_service.tiler.uri
+        value = google_cloud_run_v2_service.cache.uri
       }
 
       resources {
@@ -263,6 +313,11 @@ resource "google_cloud_run_v2_service_iam_member" "fe_public" {
 }
 
 # Outputs
+output "cache_url" {
+  description = "Cache service URL (use this for tiles)"
+  value       = google_cloud_run_v2_service.cache.uri
+}
+
 output "tiler_url" {
   description = "Tiler service URL"
   value       = google_cloud_run_v2_service.tiler.uri
