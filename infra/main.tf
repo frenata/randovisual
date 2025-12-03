@@ -14,6 +14,7 @@ provider "google" {
 
 variable "project_id" {
   description = "GCP Project ID"
+  default = "randovisual"
 }
 
 variable "region" {
@@ -115,20 +116,20 @@ resource "google_cloud_run_v2_service" "cache" {
     }
 
     containers {
-      image = "eeacms/varnish"
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.main.repository_id}/cache:latest"
 
       ports {
         container_port = 80
       }
 
       env {
-        name  = "TILESERV_HOST"
+        name  = "VARNISH_BACKEND_HOST"
         value = replace(replace(google_cloud_run_v2_service.tiler.uri, "https://", ""), "/", "")
       }
 
       env {
-        name  = "CACHE_TTL"
-        value = "600"
+        name  = "VARNISH_BACKEND_PORT"
+        value = 7800
       }
 
       resources {

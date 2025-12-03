@@ -26,6 +26,12 @@ build-tiler:
     docker push {{REGISTRY}}/tiler:latest
     gcloud run services update randovisual-tiler --region={{REGION}} --image={{REGISTRY}}/tiler:latest
 
+# Build and push cache image
+build-cache:
+    cd cache && docker build -t {{REGISTRY}}/cache:latest .
+    docker push {{REGISTRY}}/cache:latest
+    gcloud run services update randovisual-cache --region={{REGION}} --image={{REGISTRY}}/cache:latest
+
 # Build and push all images
 build-all: build-api build-fe build-tiler
 
