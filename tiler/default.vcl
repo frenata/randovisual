@@ -18,7 +18,6 @@ import std;
 # backend default none;
 
 backend default {
-   # NOTE: figure out how to inject this
    .host = "localhost";
    .port = "7800";
 }
@@ -62,6 +61,9 @@ sub vcl_synth {
 # vcl_backend_response is your chance to sanitize the response and possibly to
 # set a TTL
 sub vcl_backend_response {
+    if (bereq.url ~ "^/public.ride_routes/^") {
+        set beresp.ttl = 30d;
+    }
 }
 
 # https://github.com/varnish/toolbox/tree/master/vcls/verbose_builtin
