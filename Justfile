@@ -21,21 +21,38 @@ build-fe:
     gcloud run services update randovisual-fe --region={{REGION}} --image={{REGISTRY}}/fe:latest
 
 # Build and push tiler image
-build-tiler:
-    cd tiler && docker build -t {{REGISTRY}}/tiler:latest .
-    docker push {{REGISTRY}}/tiler:latest
-    gcloud run services update randovisual-tiler --region={{REGION}} --image={{REGISTRY}}/tiler:latest
-
-# Build and push cache image
-build-cache:
-    cd cache && docker build -t {{REGISTRY}}/cache:latest .
-    docker push {{REGISTRY}}/cache:latest
-    gcloud run services update randovisual-cache --region={{REGION}} --image={{REGISTRY}}/cache:latest
+# build-tiler:
+#     cd tiler && docker build -t {{REGISTRY}}/tiler:latest .
+#     docker push {{REGISTRY}}/tiler:latest
+#     gcloud run services update randovisual-tiler --region={{REGION}} --image={{REGISTRY}}/tiler:latest
 
 # Build and push all images
-build-all: build-api build-fe build-tiler
+build-all: build-api build-fe
 
 # Call authenticated API endpoint
 api endpoint:
     @curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
         $(cd infra && terraform output -raw api_url){{endpoint}}
+
+dump-geojson:
+    psql $DATABASE_URL -t -A -c "select * from rides_geojson where jsonb_build_object->>'geometry' is not null limit 100;" > data/routes.geojson
+
+generate-pmtiles:
+    docker run --rm \
+        --network host \
+        -v $PWD:/data \
+        metacollin/tippecanoe:latest \
+        tippecanoe -o /data/data/routes.mbtiles \
+          --force \
+          -Z0 -z14 \
+          --drop-densest-as-needed \
+          --coalesce-densest-as-needed \
+          --extend-zooms-if-still-dropping \
+          /data/data/routes.geojson
+    docker run --rm \
+            -v $PWD:/data \
+            ghcr.io/protomaps/go-pmtiles:latest \
+            convert /data/data/routes.mbtiles /data/data/routes.pmtiles
+
+push-pmtiles:
+  gcloud storage cp data/routes.pmtiles gs://randovisual-tiles/

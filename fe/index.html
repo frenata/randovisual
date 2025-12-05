@@ -4,7 +4,10 @@
   <meta charset="utf-8">
   <title>Ride Routes</title>
   <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+  <script src="https://unpkg.com/pmtiles@3.0.7/dist/pmtiles.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/@loaders.gl@latest/dist/dist.min.js"></script>
+  <script src="https://unpkg.com/@loaders.gl/mvt@latest/dist/dist.min.js"></script>
   <style>
     body { margin: 0; font-family: sans-serif; }
     #map { width: 100vw; height: 100vh; }
@@ -25,7 +28,11 @@
 
   <script>
     const { DeckGL, MVTLayer, TileLayer, BitmapLayer } = deck;
+    const { MVTLoader, load } = loaders;
+    const { PMTiles } = pmtiles;
     const { scaleSequential, interpolateViridis, interpolateTurbo } = d3;
+
+    const pmTilesSource = new PMTiles('TILER_URL_PLACEHOLDER');
 
     const hexToRgb = hex =>
       hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
@@ -37,6 +44,30 @@
     const urlParams = new URLSearchParams(window.location.search);
     const year = urlParams.get('year') || '9999';
     document.getElementById('year').textContent = year;
+
+class PMTilesLayer extends MVTLayer {
+
+  constructor(props) {
+     super(props)
+     this._pmTiles = props.pmTiles
+   }  
+
+  async getTileData(tile) {
+    console.log("Get tile data");
+     const { signal } = tile
+     const { z, x, y } = tile.index
+     const data = await this._pmTiles.getZxy(z, x, y, signal)
+     this._pmTiles.getZxyAttempt
+     if (!data) {
+       return
+     }
+     if (signal?.aborted) {
+       return
+     }
+     //return await MVTLoader.parse(data.data, {})
+     return await load(data.data, MVTLoader)
+   }
+ }
 
     // Initialize deck.gl
     new DeckGL({
@@ -70,21 +101,24 @@
                 }
         }),
 
-        new MVTLayer({
+
+        new PMTilesLayer({
           id: 'routes',
-          data: `TILER_URL_PLACEHOLDER/public.ride_routes/{z}/{x}/{y}.pbf?year=${year}`,
+          data: pmTilesSource,
+          pmTiles: pmTilesSource,
           minZoom: 0,
           maxZoom: 14,
-
-          // Debugging: Log ride_count values to see if they're correct
+          
+          // Filter by year client-side
           getLineColor: d => {
-            const count = d.properties.ride_count || 1;
-            // console.log(`ride_count: ${count}`); // Log to check ride_count
+            const props = d.properties;
+            
+            const count = props.ride_count || 1;
             const colorMap = scaleSequential(interpolateViridis).domain([1,25]);
             const color = colorMap(count+5);
             return hexToRgb(color);
           },
-
+          
           getLineWidth: d => 20,
           lineWidthMinPixels: 2,
           pickable: true,
