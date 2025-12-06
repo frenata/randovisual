@@ -49,19 +49,23 @@ body { margin: 0; font-family: sans-serif; }
   font-size: 14px; 
   z-index: 1;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+  width: 300px;
 }
 #info #properties {
   display: grid;
+  width: 300px;
 }
 #info #routeName {
   margin: 0;
-  text-align: left;
+  text-align: center;
+  word-wrap: anywhere;
 }
 
 #info span.label {
   grid-column: 1;
   text-align: right;
   font-style: italic;
+  width: 140px;
 }
 #info div.spacer {
   grid-column: 2;
@@ -69,6 +73,6 @@ body { margin: 0; font-family: sans-serif; }
 }
 #info span.value {
   grid-column: 3;
-  max-width: 200px;
+  width: 150px;
   word-wrap: break-word;
 }
