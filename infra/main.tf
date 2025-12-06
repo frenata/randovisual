@@ -293,3 +293,21 @@ output "estimated_monthly_cost" {
     Total: ~$1-5/month
   EOT
 }
+
+resource "google_cloud_run_domain_mapping" "fe" {
+  location = var.region
+  name     = "randovisual.frenata.net"
+
+  metadata {
+    namespace = var.project_id
+  }
+
+  spec {
+    route_name = google_cloud_run_v2_service.fe.name
+  }
+}
+
+output "dns_records" {
+  description = "DNS records to configure"
+  value = google_cloud_run_domain_mapping.fe.status[0].resource_records
+}
