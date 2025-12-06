@@ -1,6 +1,6 @@
 create or replace view records as (
 with records as
- (select any_value(round(st_length(st_transform(route.geometry, 5070))/1000.0)) as dist
+ (select any_value(distance) as dist
        , round(min(ride.duration)/ 60.0,1) as fkt
        , count(1) as num_rides
        , count(distinct rider_id) as num_riders
@@ -23,7 +23,7 @@ SELECT jsonb_build_object(
     'ID', route.rusa_id,
     'Name', route.name,
     'Climbing', route.climbing || ' m',
-    'Distance', round(st_length(st_transform(route.geometry, 5070)) / 1000.0) || ' km',
+    'Distance', route.distance || ' km',
     'Distinct Rides', COUNT(*),
     'Distinct Riders', count(distinct rider_id),
     'Fastest Known Time', round(min(ride.duration) / 60.0, 1) || ' hours',
