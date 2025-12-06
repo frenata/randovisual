@@ -2,7 +2,7 @@
 
 Goal: extract RUSA perm (and brevet?) data over the years and visualize it on a map.
 
-<img width="2215" height="1239" alt="randovisual-2" src="https://github.com/user-attachments/assets/e72e5765-728f-4545-b0bd-50a7da5e48da" />
+<img width="1577" height="1246" alt="randovisual-3" src="https://github.com/user-attachments/assets/d536ad9a-52c1-42b1-a7b0-fd8ac811d54b" />
 
 Roadmap:
  - [x] capture further metadata about routes from rusa
