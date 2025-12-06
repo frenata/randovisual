@@ -17,6 +17,7 @@ with records as
 create or replace view rides_geojson as (
 SELECT jsonb_build_object(
   'type', 'Feature',
+  'id', route.rusa_id,
   'geometry', ST_AsGeoJSON(route.geometry)::jsonb,
   'properties', jsonb_build_object(
     'rusa_id', route.rusa_id,
@@ -28,7 +29,7 @@ SELECT jsonb_build_object(
     'fkt', round(min(ride.duration) / 60.0, 1),
     'years', jsonb_agg(distinct date_part('year', date))
   )
-)
+) as route
 FROM route
 JOIN ride ON route.rusa_id = ride.rusa_id 
   AND route.category = ride.category

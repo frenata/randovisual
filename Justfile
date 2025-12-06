@@ -35,7 +35,7 @@ api endpoint:
         $(cd infra && terraform output -raw api_url){{endpoint}}
 
 dump-geojson:
-    psql $DATABASE_URL -t -A -c "select * from rides_geojson where jsonb_build_object->>'geometry' is not null limit 100;" > data/routes.geojson
+    psql $DATABASE_URL -t -A -c "select * from rides_geojson where route->>'geometry' is not null;" > data/routes.geojson
 
 generate-pmtiles:
     docker run --rm \
