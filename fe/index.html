@@ -19,6 +19,9 @@
   <div id="map"></div>
   <div id="info">
     <div id="year-container" hidden=true>Year: <span id="year"></span></div>
+    <form id="filters" onsubmit="return handleFilters(event)">
+        <input name="year" placeholder="all"/>
+    </form>
     <div id="selected" style="margin-top: 10px; display: none;">
       <strong>Route Info:</strong><br>
       <div id="properties"></div>
@@ -39,9 +42,17 @@
         .substring(1).match(/.{2}/g)
         .map(x => parseInt(x, 16));
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const year = urlParams.get('year') || '9999';
-    document.getElementById('year').textContent = year;
+    //const urlParams = new URLSearchParams(window.location.search);
+    let year = '9999';
+    const filters = document.getElementById("filters");
+
+    //document.getElementById('year').textContent = year;
+    function handleFilters(event) {
+      event.preventDefault();
+      const data = new FormData(filters);
+      year = data.get("year");
+      console.log(year);
+    }
 
     class PMTilesLayer extends MVTLayer {
 
@@ -109,6 +120,7 @@
           binary: false,
           
           getLineColor: d => {
+            console.log("getLineColor for ", year);
             const props = d.properties;
             
             const years = props["Distinct Years"] || [];
@@ -136,6 +148,9 @@
               document.getElementById('properties').innerHTML = propsHtml;
               document.getElementById('selected').style.display = 'block';
             }
+          },
+          updateTriggers: {
+            getLineColor: [year],
           },
         })
       ]
