@@ -1,47 +1,14 @@
 const { DeckGL, MVTLayer, TileLayer, BitmapLayer } = deck;
-const { MVTLoader, load } = loaders;
 const { PMTiles } = pmtiles;
-const { scaleSequential, interpolateViridis, interpolateTurbo } = d3;
+const { scaleSequential, interpolateViridis } = d3;
+
+import { PMTilesLayer } from "./pmTilesLayer.js";
+import { hexToRgb } from "./utils.js";
 
 const pmTilesSource = new PMTiles('TILER_URL_PLACEHOLDER');
 
-const hexToRgb = hex =>
-  hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
-             ,(m, r, g, b) => '#' + r + r + g + g + b + b)
-    .substring(1).match(/.{2}/g)
-    .map(x => parseInt(x, 16));
-
-//const urlParams = new URLSearchParams(window.location.search);
-const filters = document.getElementById("filters");
-//let year = "all";
-
-
-class PMTilesLayer extends MVTLayer {
-
-  constructor(props) {
-     super(props)
-     this._pmTiles = props.pmTiles
-   }  
-
-  async getTileData(tile) {
-     const { signal } = tile
-     const { z, x, y } = tile.index
-     const data = await this._pmTiles.getZxy(z, x, y, signal)
-     this._pmTiles.getZxyAttempt
-     if (!data) {
-       return
-     }
-     if (signal?.aborted) {
-       return
-     }
-     //return await MVTLoader.parse(data.data, {})
-     return await load(data.data, MVTLoader)
-   }
- }
-
 const getLayers = (year) => {
-	console.log("getLayers with ", year);
-	return [
+  return [
     new TileLayer({
       id: 'osm-basemap',
       data: 'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
@@ -62,7 +29,6 @@ const getLayers = (year) => {
             }
     }),
 
-
     new PMTilesLayer({
       id: 'routes',
       data: 'pmtiles://{z}/{x}/{y}', // fake address
@@ -70,13 +36,10 @@ const getLayers = (year) => {
       minZoom: 0,
       maxZoom: 14,
       binary: false,
-      
       getLineColor: d => {
-        console.log("getLineColor for ", year);
         const props = d.properties;
-        
         const years = props["Distinct Years"] || [];
-        
+
         if (year !== "all" && !years.includes(parseInt(year))) {
           return [200, 200, 200, 0];
         }
@@ -85,7 +48,6 @@ const getLayers = (year) => {
         const color = colorMap(count+3);
         return hexToRgb(color);
       },
-      
       getLineWidth: d => 20,
       lineWidthMinPixels: 2,
       pickable: true,
@@ -108,7 +70,6 @@ const getLayers = (year) => {
   ]
 }
 
-// Initialize deck.gl
 const map = new DeckGL({
   container: 'map',
   initialViewState: {
@@ -123,10 +84,10 @@ const map = new DeckGL({
   layers: getLayers("all"),
 });
 
-
-function handleFilters(event) {
+const filters = document.getElementById("filters");
+filters.addEventListener("submit", (event) => {
   event.preventDefault();
   const data = new FormData(filters);
   let year = data.get("year") || "all";
   map.setProps({layers: getLayers(year)});
-}
+});

@@ -7,7 +7,8 @@
   <script src="https://unpkg.com/pmtiles@3.0.7/dist/pmtiles.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://unpkg.com/@loaders.gl/mvt@latest/dist/dist.min.js"></script>
-  <script src="main.js" defer></script>
+
+  <script src="main.js" type="module"></script>
   <style>
     body { margin: 0; font-family: sans-serif; }
     #map { width: 100vw; height: 100vh; }
@@ -20,7 +21,7 @@
   <div id="map"></div>
   <div id="info">
     <div id="year-container" hidden=true>Year: <span id="year"></span></div>
-    <form id="filters" onsubmit="return handleFilters(event)">
+    <form id="filters">
         <input name="year" placeholder="all"/>
     </form>
     <div id="selected" style="margin-top: 10px; display: none;">

@@ -14,8 +14,9 @@ Roadmap:
  - [x] use PMTiles to not even need to dynamically tile anything
  - [ ] poke RUSA about whether this is possible to do for brevets
  - [ ] provide some FE filtering
-   - [ ] start with changing year this way rather than via query param
+   - [x] start with changing year this way rather than via query param
  - [x] improve route info panel
  - [ ] use TripsLayer to show routes populate over time
  - [ ] render 3d maps of the routes at high zooms
  - [ ] colorize routes based on rides done *in that year*
+ - [ ] move FE assets to a CDN
