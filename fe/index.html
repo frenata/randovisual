@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Ride Routes</title>
+  <title>RandoVisual</title>
   <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
   <script src="https://unpkg.com/pmtiles@3.0.7/dist/pmtiles.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -19,7 +19,7 @@
 <body>
   <div id="map"></div>
   <div id="info">
-    <div>Year: <span id="year"></span></div>
+    <div id="year-container" hidden=true>Year: <span id="year"></span></div>
     <div id="selected" style="margin-top: 10px; display: none;">
       <strong>Route Info:</strong><br>
       <div id="properties"></div>
@@ -79,11 +79,13 @@ class PMTilesLayer extends MVTLayer {
         pitch: 0,
         bearing: 0
       },
+      getCursor: ({isDragging}) => isDragging ? 'grabbing' : 'crosshair',
       controller: true,
       layers: [
         new TileLayer({
           id: 'osm-basemap',
-          data: 'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          data: 'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+          //data: 'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
           minZoom: 0,
           maxZoom: 19,
           tileSize: 256,
@@ -104,15 +106,20 @@ class PMTilesLayer extends MVTLayer {
 
         new PMTilesLayer({
           id: 'routes',
-          data: pmTilesSource,
+          data: 'pmtiles://{z}/{x}/{y}', // fake address
           pmTiles: pmTilesSource,
           minZoom: 0,
           maxZoom: 14,
+          binary: false,
           
-          // Filter by year client-side
           getLineColor: d => {
             const props = d.properties;
             
+            const years = props.years || [];
+            
+            if (year !== '9999' && !years.includes(parseInt(year))) {
+              return [200, 200, 200, 0];
+            }
             const count = props.ride_count || 1;
             const colorMap = scaleSequential(interpolateViridis).domain([1,25]);
             const color = colorMap(count+5);
@@ -124,7 +131,7 @@ class PMTilesLayer extends MVTLayer {
           pickable: true,
           autoHighlight: true,
           onClick: info => {
-            if (info.object) {
+            if (info.object && (year === '9999' || (info.object.properties.years || []).includes(year) )) {
               const props = info.object.properties;
               const propsHtml = Object.entries(props)
                 .map(([key, val]) => `${key}: ${val}`)
@@ -132,7 +139,7 @@ class PMTilesLayer extends MVTLayer {
               document.getElementById('properties').innerHTML = propsHtml;
               document.getElementById('selected').style.display = 'block';
             }
-          }
+          },
         })
       ]
     });
