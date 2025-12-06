@@ -1,38 +1,33 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>RandoVisual</title>
-  <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
-  <script src="https://unpkg.com/pmtiles@3.0.7/dist/pmtiles.js"></script>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://unpkg.com/@loaders.gl/mvt@latest/dist/dist.min.js"></script>
-
-  <script src="main.js" type="module"></script>
-  <style>
-    body { margin: 0; font-family: sans-serif; }
-    #map { width: 100vw; height: 100vh; }
-    #info { position: absolute; top: 10px; left: 10px; background: white; 
-            padding: 10px; border-radius: 4px; font-size: 14px; z-index: 1;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <div id="info">
-    <div id="year-container" hidden=true>Year: <span id="year"></span></div>
-    <form id="filters">
-        <label for="year">Year</label>
-        <input name="year" placeholder="all years"/>
-        <label for="distance">Minimum Distance</label>
-        <input name="distance" placeholder="none"/>
-        <input type="submit" hidden="true"/>
-    </form>
-    <div id="selected" style="margin-top: 10px; display: none;">
-      <strong>Route Info:</strong><br>
-      <div id="properties"></div>
+  <head>
+    <meta charset="utf-8">
+    <title>RandoVisual</title>
+    <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+    <script src="https://unpkg.com/pmtiles@3.0.7/dist/pmtiles.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/@loaders.gl/mvt@latest/dist/dist.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/mvp.css"> 
+    <link rel="stylesheet" href="main.css"> 
+    <script src="main.js" type="module"></script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="filter">
+      <form id="filters">
+          <input name="year" placeholder="all years"/>
+          <label for="year">Year</label>
+          <div class="spacer"></div>
+          <input name="distance" placeholder="none"/>
+          <label for="distance">Minimum Distance</label>
+          <input type="submit" hidden="true"/>
+      </form>
     </div>
-  </div>
-
-</body>
+    <div id="info" style="display: none;">
+      <div id="selected" style="display: none;">
+        <h3 id="routeName"></h3>
+        <div id="properties"></div>
+      </div>
+    </div>
+  </body>
 </html>

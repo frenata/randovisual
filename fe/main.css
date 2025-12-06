@@ -1,0 +1,74 @@
+body { margin: 0; font-family: sans-serif; }
+
+#map { width: 100vw; height: 100vh; }
+
+#filter { 
+  position: absolute; 
+  top: 10px; 
+  right: 10px; 
+  background: gray; 
+  padding: 10px; 
+  border-radius: 4px; 
+  font-size: 14px; 
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+}
+#filter form {
+  display: grid;
+  padding: 0px;
+  border: none;
+  box-shadow: 0 0 0;
+}
+#filter label {
+  grid-column: 3;
+  margin-bottom: 0px;
+  align-items: center;
+  display: grid;
+  text-align: left;
+}
+#filter input {
+  grid-column: 1;
+  background: gray;
+  margin-bottom: 0px;
+}
+#filter .spacer {
+  grid-column: 2;
+  width: 10px;
+}
+#filter input[type=submit] {
+  display: none;
+}
+
+#info { 
+  position: absolute; 
+  top: 10px; 
+  left: 10px; 
+  background: gray; 
+  padding: 10px; 
+  border-radius: 4px; 
+  font-size: 14px; 
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+}
+#info #properties {
+  display: grid;
+}
+#info #routeName {
+  margin: 0;
+  text-align: left;
+}
+
+#info span.label {
+  grid-column: 1;
+  text-align: right;
+  font-style: italic;
+}
+#info div.spacer {
+  grid-column: 2;
+  width: 10px;
+}
+#info span.value {
+  grid-column: 3;
+  max-width: 200px;
+  word-wrap: break-word;
+}

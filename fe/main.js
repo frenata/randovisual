@@ -58,17 +58,18 @@ const getLayers = (year, distance) => {
       getLineWidth: d => 20,
       lineWidthMinPixels: 2,
       pickable: true,
-      autoHighlight: true,
       onClick: info => {
         if (!info.object) { return; }
         if (isVisible(info.object, year, distance)) {
           const props = info.object.properties;
           const propsHtml = Object.entries(props)
-            .filter(([key, val]) => !["id", "layerName"].includes(key))
-            .map(([key, val]) => `${key}: ${val}`)
-            .join('<br>');
-          document.getElementById('properties').innerHTML = propsHtml;
+            .filter(([key, val]) => !["id", "layerName", "Name"].includes(key))
+            .map(renderProp)
+            .join('<br/>');
+          document.getElementById("routeName").innerHTML = props["Name"] || "";
+          document.getElementById('properties').innerHTML = "<div class='spacer'></div>" + propsHtml;
           document.getElementById('selected').style.display = 'block';
+          document.getElementById('info').style.display = 'block';
         }
       },
       updateTriggers: {
@@ -76,6 +77,16 @@ const getLayers = (year, distance) => {
       },
     })
   ]
+}
+
+const renderProp = ([key, val]) => {
+  if (key == "Distinct Years") {
+    val = val.replaceAll("[", "").replace("]","").replaceAll(",", ", ");
+  }
+  return `
+    <span class='label'>${key}</span>
+    <span class='value'>${val}</span>
+  `
 }
 
 const map = new DeckGL({
