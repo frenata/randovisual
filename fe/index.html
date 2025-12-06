@@ -45,29 +45,29 @@
     const year = urlParams.get('year') || '9999';
     document.getElementById('year').textContent = year;
 
-class PMTilesLayer extends MVTLayer {
+    class PMTilesLayer extends MVTLayer {
 
-  constructor(props) {
-     super(props)
-     this._pmTiles = props.pmTiles
-   }  
+      constructor(props) {
+         super(props)
+         this._pmTiles = props.pmTiles
+       }  
 
-  async getTileData(tile) {
-    console.log("Get tile data");
-     const { signal } = tile
-     const { z, x, y } = tile.index
-     const data = await this._pmTiles.getZxy(z, x, y, signal)
-     this._pmTiles.getZxyAttempt
-     if (!data) {
-       return
+      async getTileData(tile) {
+        console.log("Get tile data");
+         const { signal } = tile
+         const { z, x, y } = tile.index
+         const data = await this._pmTiles.getZxy(z, x, y, signal)
+         this._pmTiles.getZxyAttempt
+         if (!data) {
+           return
+         }
+         if (signal?.aborted) {
+           return
+         }
+         //return await MVTLoader.parse(data.data, {})
+         return await load(data.data, MVTLoader)
+       }
      }
-     if (signal?.aborted) {
-       return
-     }
-     //return await MVTLoader.parse(data.data, {})
-     return await load(data.data, MVTLoader)
-   }
- }
 
     // Initialize deck.gl
     new DeckGL({
