@@ -15,6 +15,13 @@ with records as
 );
 
 create or replace view rides_geojson as (
+
+with rides_per_year as 
+  (select route.category, route.rusa_id, count(1), date_part('year', date)::int as year 
+   from route join ride on ride.rusa_id = route.rusa_id and ride.category = route.category 
+   group by route.rusa_id, route.category, date_part('year', date))
+ , aggr_years as (select category, rusa_id, jsonb_object_agg(year, count) as rides_per_year from rides_per_year group by category, rusa_id)
+
 SELECT jsonb_build_object(
   'type', 'Feature',
   'id', route.rusa_id,
@@ -27,10 +34,15 @@ SELECT jsonb_build_object(
     'Distinct Rides', COUNT(*),
     'Distinct Riders', count(distinct rider_id),
     'Fastest Known Time', round(min(ride.duration) / 60.0, 1) || ' hours',
-    'Distinct Years', jsonb_agg(distinct date_part('year', date))
+    'Distinct Years', jsonb_agg(distinct date_part('year', date)),
+    'Rides By Year', any_value(aggr_years.rides_per_year)
   )
 ) as route
 FROM route
-JOIN ride ON route.rusa_id = ride.rusa_id 
+JOIN ride 
+  ON route.rusa_id = ride.rusa_id 
   AND route.category = ride.category
-GROUP BY route.rusa_id, route.geometry, route.name, route.climbing)
+JOIN aggr_years
+  ON route.rusa_id = aggr_years.rusa_id 
+  AND route.category = aggr_years.category
+GROUP BY route.rusa_id, route.geometry, route.name, route.climbing, route.distance)

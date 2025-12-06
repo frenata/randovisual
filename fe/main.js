@@ -50,7 +50,7 @@ const getLayers = (year, distance) => {
         if (!isVisible(d, year, distance)) {
           return [200, 200, 200, 0];
         }
-        const count = props["Distinct Rides"] || 1;
+        const count = year === "all" ? props["Distinct Rides"] : JSON.parse(props["Rides By Year"])[year];
         const colorMap = scaleSequential(interpolateViridis).domain([1,25]);
         const color = colorMap(count+3);
         return hexToRgb(color);
@@ -62,8 +62,9 @@ const getLayers = (year, distance) => {
         if (!info.object) { return; }
         if (isVisible(info.object, year, distance)) {
           const props = info.object.properties;
+          const noDisplay = ["id", "layerName", "Name", "Rides By Year"];
           const propsHtml = Object.entries(props)
-            .filter(([key, val]) => !["id", "layerName", "Name"].includes(key))
+            .filter(([key, val]) => !noDisplay.includes(key))
             .map(renderProp)
             .join('<br/>');
           document.getElementById("routeName").innerHTML = props["Name"] || "";
