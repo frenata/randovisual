@@ -12,16 +12,9 @@ const hexToRgb = hex =>
     .map(x => parseInt(x, 16));
 
 //const urlParams = new URLSearchParams(window.location.search);
-let year = '9999';
 const filters = document.getElementById("filters");
+//let year = "all";
 
-//document.getElementById('year').textContent = year;
-function handleFilters(event) {
-  event.preventDefault();
-  const data = new FormData(filters);
-  year = data.get("year");
-  console.log(year);
-}
 
 class PMTilesLayer extends MVTLayer {
 
@@ -46,19 +39,9 @@ class PMTilesLayer extends MVTLayer {
    }
  }
 
-// Initialize deck.gl
-new DeckGL({
-  container: 'map',
-  initialViewState: {
-    latitude: 39.8283,
-    longitude: -98.5795,
-    zoom: 4,
-    pitch: 0,
-    bearing: 0
-  },
-  getCursor: ({isDragging}) => isDragging ? 'grabbing' : 'crosshair',
-  controller: true,
-  layers: [
+const getLayers = (year) => {
+	console.log("getLayers with ", year);
+	return [
     new TileLayer({
       id: 'osm-basemap',
       data: 'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
@@ -94,7 +77,7 @@ new DeckGL({
         
         const years = props["Distinct Years"] || [];
         
-        if (year !== '9999' && !years.includes(parseInt(year))) {
+        if (year !== "all" && !years.includes(parseInt(year))) {
           return [200, 200, 200, 0];
         }
         const count = props["Distinct Rides"] || 1;
@@ -108,7 +91,7 @@ new DeckGL({
       pickable: true,
       autoHighlight: true,
       onClick: info => {
-        if (info.object && (year === '9999' || (info.object.properties["Distinct Years"] || []).includes(year) )) {
+        if (info.object && (year === "all" || (info.object.properties["Distinct Years"] || []).includes(year) )) {
           const props = info.object.properties;
           const propsHtml = Object.entries(props)
             .filter(([key, val]) => !["id", "layerName"].includes(key))
@@ -123,4 +106,27 @@ new DeckGL({
       },
     })
   ]
+}
+
+// Initialize deck.gl
+const map = new DeckGL({
+  container: 'map',
+  initialViewState: {
+    latitude: 39.8283,
+    longitude: -98.5795,
+    zoom: 4,
+    pitch: 0,
+    bearing: 0
+  },
+  getCursor: ({isDragging}) => isDragging ? 'grabbing' : 'crosshair',
+  controller: true,
+  layers: getLayers("all"),
 });
+
+
+function handleFilters(event) {
+  event.preventDefault();
+  const data = new FormData(filters);
+  let year = data.get("year") || "all";
+  map.setProps({layers: getLayers(year)});
+}
