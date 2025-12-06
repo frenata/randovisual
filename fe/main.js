@@ -117,3 +117,12 @@ filters.addEventListener("submit", (event) => {
   let distance = data.get("distance") || "all";
   map.setProps({layers: getLayers(year, distance)});
 });
+
+addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    document.getElementById("routeName").innerHTML = "";
+    document.getElementById('properties').innerHTML = "";
+    document.getElementById('selected').style.display = 'none';
+    document.getElementById('info').style.display = 'none';
+  }
+});
