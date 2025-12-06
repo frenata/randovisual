@@ -73,9 +73,14 @@ const getLayers = (year) => {
 const map = new DeckGL({
   container: 'map',
   initialViewState: {
-    latitude: 39.8283,
-    longitude: -98.5795,
-    zoom: 4,
+    // NOTE: CONUS
+    // latitude: 39.8283,
+    // longitude: -98.5795,
+    // zoom: 4.0,
+    // NOTE: plus Alaska, Hawaii, and Puerto Rico
+    latitude: 45.0,
+    longitude: -114.0,
+    zoom: 3.1,
     pitch: 0,
     bearing: 0
   },
