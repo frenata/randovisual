@@ -15,3 +15,6 @@ wheels/
 # tf
 infra/.terraform
 infra/terraform.tfstate*
+
+# ignored
+data/

@@ -115,12 +115,12 @@ class PMTilesLayer extends MVTLayer {
           getLineColor: d => {
             const props = d.properties;
             
-            const years = props.years || [];
+            const years = props["Distinct Years"] || [];
             
             if (year !== '9999' && !years.includes(parseInt(year))) {
               return [200, 200, 200, 0];
             }
-            const count = props.ride_count || 1;
+            const count = props["Distinct Rides"] || 1;
             const colorMap = scaleSequential(interpolateViridis).domain([1,25]);
             const color = colorMap(count+5);
             return hexToRgb(color);
@@ -131,9 +131,10 @@ class PMTilesLayer extends MVTLayer {
           pickable: true,
           autoHighlight: true,
           onClick: info => {
-            if (info.object && (year === '9999' || (info.object.properties.years || []).includes(year) )) {
+            if (info.object && (year === '9999' || (info.object.properties["Distinct Years"] || []).includes(year) )) {
               const props = info.object.properties;
               const propsHtml = Object.entries(props)
+                .filter(([key, val]) => !["id", "layerName"].includes(key))
                 .map(([key, val]) => `${key}: ${val}`)
                 .join('<br>');
               document.getElementById('properties').innerHTML = propsHtml;

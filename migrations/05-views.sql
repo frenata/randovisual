@@ -20,14 +20,14 @@ SELECT jsonb_build_object(
   'id', route.rusa_id,
   'geometry', ST_AsGeoJSON(route.geometry)::jsonb,
   'properties', jsonb_build_object(
-    'rusa_id', route.rusa_id,
-    'name', route.name,
-    'climbing', route.climbing,
-    'distance', round(st_length(st_transform(route.geometry, 5070)) / 1000.0),
-    'ride_count', COUNT(*),
-    'rider_count', count(distinct rider_id),
-    'fkt', round(min(ride.duration) / 60.0, 1),
-    'years', jsonb_agg(distinct date_part('year', date))
+    'ID', route.rusa_id,
+    'Name', route.name,
+    'Climbing', route.climbing || ' m',
+    'Distance', round(st_length(st_transform(route.geometry, 5070)) / 1000.0) || ' km',
+    'Distinct Rides', COUNT(*),
+    'Distinct Riders', count(distinct rider_id),
+    'Fastest Known Time', round(min(ride.duration) / 60.0, 1) || ' hours',
+    'Distinct Years', jsonb_agg(distinct date_part('year', date))
   )
 ) as route
 FROM route
