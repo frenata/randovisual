@@ -47,8 +47,6 @@ const getLayers = (year, distance) => {
       binary: false,
       getLineColor: d => {
         const props = d.properties;
-        const years = props["Distinct Years"] || [];
-
         if (!isVisible(d, year, distance)) {
           return [200, 200, 200, 0];
         }
