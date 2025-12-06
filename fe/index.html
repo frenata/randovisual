@@ -118,7 +118,7 @@
             }
             const count = props["Distinct Rides"] || 1;
             const colorMap = scaleSequential(interpolateViridis).domain([1,25]);
-            const color = colorMap(count+5);
+            const color = colorMap(count+3);
             return hexToRgb(color);
           },
           
