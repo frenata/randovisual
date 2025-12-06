@@ -15,8 +15,11 @@ Roadmap:
  - [ ] poke RUSA about whether this is possible to do for brevets
  - [ ] provide some FE filtering
    - [x] start with changing year this way rather than via query param
+   - [x] distance
+   - [ ] # of riders
  - [x] improve route info panel
  - [ ] use TripsLayer to show routes populate over time
  - [ ] render 3d maps of the routes at high zooms
  - [ ] colorize routes based on rides done *in that year*
  - [ ] move FE assets to a CDN
+ - [ ] build a new BE extractor to grab ride by *year* or *month* rather than by rider

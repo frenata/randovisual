@@ -7,7 +7,16 @@ import { hexToRgb } from "./utils.js";
 
 const pmTilesSource = new PMTiles('TILER_URL_PLACEHOLDER');
 
-const getLayers = (year) => {
+const isVisible = (route, year, distance) => {
+  let minimumDistance = parseInt(distance);
+  let routeDistance = parseInt(route.properties["Distance"]);
+
+  return (
+    (year     === "all" || (route.properties["Distinct Years"] || []).includes(year)) &&
+    (distance === "all" || routeDistance > minimumDistance ))
+}
+
+const getLayers = (year, distance) => {
   return [
     new TileLayer({
       id: 'osm-basemap',
@@ -40,7 +49,7 @@ const getLayers = (year) => {
         const props = d.properties;
         const years = props["Distinct Years"] || [];
 
-        if (year !== "all" && !years.includes(parseInt(year))) {
+        if (!isVisible(d, year, distance)) {
           return [200, 200, 200, 0];
         }
         const count = props["Distinct Rides"] || 1;
@@ -53,7 +62,8 @@ const getLayers = (year) => {
       pickable: true,
       autoHighlight: true,
       onClick: info => {
-        if (info.object && (year === "all" || (info.object.properties["Distinct Years"] || []).includes(year) )) {
+        if (!info.object) { return; }
+        if (isVisible(info.object, year, distance)) {
           const props = info.object.properties;
           const propsHtml = Object.entries(props)
             .filter(([key, val]) => !["id", "layerName"].includes(key))
@@ -64,7 +74,7 @@ const getLayers = (year) => {
         }
       },
       updateTriggers: {
-        getLineColor: [year],
+        getLineColor: [year, distance],
       },
     })
   ]
@@ -86,7 +96,7 @@ const map = new DeckGL({
   },
   getCursor: ({isDragging}) => isDragging ? 'grabbing' : 'crosshair',
   controller: true,
-  layers: getLayers("all"),
+  layers: getLayers("all", "all"),
 });
 
 const filters = document.getElementById("filters");
@@ -94,5 +104,6 @@ filters.addEventListener("submit", (event) => {
   event.preventDefault();
   const data = new FormData(filters);
   let year = data.get("year") || "all";
-  map.setProps({layers: getLayers(year)});
+  let distance = data.get("distance") || "all";
+  map.setProps({layers: getLayers(year, distance)});
 });
