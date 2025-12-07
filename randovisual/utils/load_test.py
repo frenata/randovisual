@@ -11,6 +11,7 @@ DATABASE_URL = os.getenv("DATABASE_URL_LOAD")
 MULTIPLIER = 10  # How many times to multiply the routes
 PERTURBATION_DEGREES = 0.01  # ~1km at equator
 PERTURB_VERTICES = True  # Set to False to only translate, not perturb individual points
+MAX_ROUTES_TO_PROCESS = None  # Set to a number to limit how many source routes to process
 
 def perturb_geometry(session, geometry, perturbation_scale, perturb_vertices=True):
     """Apply translation and optionally perturb individual vertices"""
@@ -93,6 +94,11 @@ def load_test_data_generation(multiplier=MULTIPLIER):
         # Get all existing routes
         existing_routes = session.execute(select(Route)).scalars().all()
         print(f"Found {len(existing_routes)} existing routes")
+        
+        # Optionally limit how many source routes to process
+        if MAX_ROUTES_TO_PROCESS is not None:
+            existing_routes = existing_routes[:MAX_ROUTES_TO_PROCESS]
+            print(f"Processing only {len(existing_routes)} routes")
         
         # Get all member IDs
         member_ids = [m.id for m in session.execute(select(Member.id)).scalars().all()]
