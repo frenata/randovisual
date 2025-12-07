@@ -1,9 +1,9 @@
+import os
 import random
 import datetime
 from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import Session
 from geoalchemy2.functions import ST_AsText, ST_GeomFromText, ST_Translate
-from randovisual.db import Base
 from randovisual.db.member import Member, Ride, Route
 
 # Configuration
@@ -11,7 +11,7 @@ DATABASE_URL = os.getenv("DATABASE_URL_LOAD")
 MULTIPLIER = 10  # How many times to multiply the routes
 PERTURBATION_DEGREES = 0.01  # ~1km at equator
 PERTURB_VERTICES = True  # Set to False to only translate, not perturb individual points
-MAX_ROUTES_TO_PROCESS = None  # Set to a number to limit how many source routes to process
+MAX_ROUTES_TO_PROCESS = 500
 
 def perturb_geometry(session, geometry, perturbation_scale, perturb_vertices=True):
     """Apply translation and optionally perturb individual vertices"""
@@ -88,11 +88,11 @@ def generate_rides_for_route(session, route, member_ids, num_rides):
     return rides
 
 def load_test_data_generation(multiplier=MULTIPLIER):
-    engine = create_engine(DATABASE_URL)
+    engine = create_engine(DATABASE_URL.replace("postgresql", "postgresql+psycopg"))
     
     with Session(engine) as session:
         # Get all existing routes
-        existing_routes = session.execute(select(Route)).scalars().all()
+        existing_routes = session.execute(select(Route).where(Route.geometry.is_not(None)).limit(MAX_ROUTES_TO_PROCESS).offset(MAX_ROUTES_TO_PROCESS).order_by(Route.rusa_id)).scalars().all()
         print(f"Found {len(existing_routes)} existing routes")
         
         # Optionally limit how many source routes to process
@@ -101,7 +101,7 @@ def load_test_data_generation(multiplier=MULTIPLIER):
             print(f"Processing only {len(existing_routes)} routes")
         
         # Get all member IDs
-        member_ids = [m.id for m in session.execute(select(Member.id)).scalars().all()]
+        member_ids = session.execute(select(Member.id)).scalars().all()
         print(f"Found {len(member_ids)} members")
         
         if not existing_routes or not member_ids:
@@ -130,7 +130,7 @@ def load_test_data_generation(multiplier=MULTIPLIER):
                 new_route = Route(
                     rusa_id=next_rusa_id,
                     rwgps_id=original_route.rwgps_id + next_rusa_id,  # Keep unique
-                    geometry=func.ST_GeomFromText(perturbed_geom_wkt, 4326),
+                    geometry=f"SRID=4326;{perturbed_geom_wkt}", 
                     name=f"{original_route.name} (Copy {copy_num + 1})",
                     climbing=int(original_route.climbing * random.uniform(0.9, 1.1)),  # Vary climbing slightly
                     category=original_route.category
