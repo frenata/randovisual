@@ -1,7 +1,7 @@
 import functools
 from fastapi import Depends, APIRouter
 import randovisual.extraction.rusa as rusa
-from randovisual.db.member import Member, Ride, Route
+from randovisual.db.models import Member, Ride, Route
 from randovisual.api.db import get_db
 import sqlalchemy as sql
 import sqlalchemy.dialects.postgresql as psql

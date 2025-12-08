@@ -4,7 +4,7 @@ import datetime
 from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import Session
 from geoalchemy2.functions import ST_AsText, ST_GeomFromText, ST_Translate
-from randovisual.db.member import Member, Ride, Route
+from randovisual.db.models import Member, Ride, Route
 
 # Configuration
 DATABASE_URL = os.getenv("DATABASE_URL_LOAD")
