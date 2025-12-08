@@ -4,7 +4,7 @@ While existing [tools](https://rusa.bike/) are excellent for searching out perma
 
 Secondarily, thanks to no small part to my [dayjob](https://www.overstory.com/) I have an interest in exploring techniques to make exploring very large datasets *blazing fast*. RandoVisual thus serves as an outlet for experimentation of technique.
 
-<img width="1577" height="1246" alt="randovisual-3" src="https://github.com/user-attachments/assets/d536ad9a-52c1-42b1-a7b0-fd8ac811d54b" />
+<img width="1713" height="1249" alt="randovisual-4" src="https://github.com/user-attachments/assets/04ccda03-2afb-484e-8c27-87123b7b5089" />
 
 ### Technical Details
 
