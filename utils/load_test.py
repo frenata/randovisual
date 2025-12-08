@@ -12,6 +12,7 @@ MULTIPLIER = 10  # How many times to multiply the routes
 PERTURBATION_DEGREES = 0.01  # ~1km at equator
 PERTURB_VERTICES = True  # Set to False to only translate, not perturb individual points
 MAX_ROUTES_TO_PROCESS = 500
+SKIP_ROUTES_TO_PROCESS = 1000
 
 def perturb_geometry(session, geometry, perturbation_scale, perturb_vertices=True):
     """Apply translation and optionally perturb individual vertices"""
@@ -92,7 +93,7 @@ def load_test_data_generation(multiplier=MULTIPLIER):
     
     with Session(engine) as session:
         # Get all existing routes
-        existing_routes = session.execute(select(Route).where(Route.geometry.is_not(None)).limit(MAX_ROUTES_TO_PROCESS).offset(MAX_ROUTES_TO_PROCESS).order_by(Route.rusa_id)).scalars().all()
+        existing_routes = session.execute(select(Route).where(Route.geometry.is_not(None)).limit(MAX_ROUTES_TO_PROCESS).offset(SKIP_ROUTES_TO_PROCESS).order_by(Route.rusa_id)).scalars().all()
         print(f"Found {len(existing_routes)} existing routes")
         
         # Optionally limit how many source routes to process
