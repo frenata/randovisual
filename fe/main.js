@@ -5,8 +5,6 @@ const { scaleSequential, interpolateViridis } = d3;
 import { PMTilesLayer } from "./pmTilesLayer.js";
 import { hexToRgb } from "./utils.js";
 
-const pmTilesSource = new PMTiles('TILER_URL_PLACEHOLDER');
-
 const isVisible = (route, year, distance) => {
   let minimumDistance = parseInt(distance);
   let routeDistance = parseInt(route.properties["Distance"]);
@@ -15,6 +13,10 @@ const isVisible = (route, year, distance) => {
     (year     === "all" || (route.properties["Distinct Years"] || []).includes(year)) &&
     (distance === "all" || routeDistance > minimumDistance ))
 }
+
+const tilerUrl = 'TILER_URL_PLACEHOLDER';
+const tilerClass = (tilerUrl.includes("pmtiles")) ? PMTilesLayer : MVTLayer; 
+const tilerData = (tilerUrl.includes("pmtiles")) ? new PMTiles('TILER_URL_PLACEHOLDER') : `${tilerUrl}/public.ride_routes/{z}/{x}/{y}.pbf`;
 
 const getLayers = (year, distance) => {
   return [
@@ -38,10 +40,9 @@ const getLayers = (year, distance) => {
             }
     }),
 
-    new PMTilesLayer({
+    new tilerClass({
       id: 'routes',
-      data: 'pmtiles://{z}/{x}/{y}', // fake address
-      pmTiles: pmTilesSource,
+      data: tilerData,
       minZoom: 0,
       maxZoom: 14,
       binary: false,

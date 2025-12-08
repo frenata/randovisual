@@ -6,7 +6,7 @@ export class PMTilesLayer extends MVTLayer {
 
   constructor(props) {
      super(props)
-     this._pmTiles = props.pmTiles
+     this._pmTiles = props.data
    }
 
   async getTileData(tile) {

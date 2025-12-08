@@ -1,21 +1,23 @@
 services:
-  # db:
-  #   image: postgis/postgis:18-3.6
-  #   ports:
-  #     - "5432:5432"
-  #   environment:
-  #     POSTGRES_PASSWORD: rusa
-  #     POSTGRES_USER: rusa
-  #   volumes:
-  #     - ./data/postgres:/var/lib/postgresql
+  db:
+    image: postgis/postgis:18-3.6
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: rusa
+      POSTGRES_USER: rusa
+    volumes:
+      - ./data/postgres:/var/lib/postgresql
   tiler:
-    image: pramsey/pg_tileserv
+    build:
+      context: tiler
     ports:
       - "7800:7800"
+      - "8080:8080"
     env_file:
-      - .env
-    volumes:
-      - ./pg_tileserv.toml:/config/pg_tileserv.toml
+      - .env.local
+    depends_on:
+      - db
   api:
     build:
       context: .
@@ -23,9 +25,16 @@ services:
     ports:
       - "8000:8000"
     env_file:
+      - .env.local
       - .env
+    depends_on:
+      - db
   fe:
     build:
       context: fe
     ports:
       - "8181:80"
+    environment:
+      TILER_URL: http://localhost:7800
+    depends_on:
+      - tiler
