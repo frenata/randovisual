@@ -32,3 +32,4 @@ TODO :)
  - [ ] build a new BE extractor to grab ride by *year* or *month* rather than by rider
  - [ ] bug: non-visible routes can prevent selecting visible routes
    * find out if DeckGL (can?) give back a list of pickables?
+ - [x] highlight and show route info on hover

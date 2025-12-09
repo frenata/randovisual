@@ -18,7 +18,7 @@ const tilerUrl = 'TILER_URL_PLACEHOLDER';
 const tilerClass = (tilerUrl.includes("pmtiles")) ? PMTilesLayer : MVTLayer; 
 const tilerData = (tilerUrl.includes("pmtiles")) ? new PMTiles('TILER_URL_PLACEHOLDER') : `${tilerUrl}/public.ride_routes/{z}/{x}/{y}.pbf`;
 
-const getLayers = (year, distance) => {
+const getLayers = (year, distance, hoverID) => {
   return [
     new TileLayer({
       id: 'osm-basemap',
@@ -47,6 +47,9 @@ const getLayers = (year, distance) => {
       maxZoom: 14,
       binary: false,
       getLineColor: d => {
+        if (d.properties.ID === hoverID) {
+          return [255, 0, 0, 200];
+        }
         const props = d.properties;
         if (!isVisible(d, year, distance)) {
           return [200, 200, 200, 0];
@@ -56,26 +59,16 @@ const getLayers = (year, distance) => {
         const color = colorMap(count+3);
         return hexToRgb(color);
       },
-      getLineWidth: d => 20,
+      getLineWidth: d => { return d.properties.ID === hoverID ? 100 : 20 },
+      getRadius: d => { return d.properties.ID === hoverID ? 12 : 5 },
       lineWidthMinPixels: 2,
       pickable: true,
-      onClick: info => {
-        if (!info.object) { return; }
-        if (isVisible(info.object, year, distance)) {
-          const props = info.object.properties;
-          const noDisplay = ["id", "layerName", "Name", "Rides By Year"];
-          const propsHtml = Object.entries(props)
-            .filter(([key, val]) => !noDisplay.includes(key))
-            .map(renderProp)
-            .join('<br/>');
-          document.getElementById("routeName").innerHTML = props["Name"] || "";
-          document.getElementById('properties').innerHTML = "<div class='spacer'></div>" + propsHtml;
-          document.getElementById('selected').style.display = 'block';
-          document.getElementById('info').style.display = 'block';
-        }
-      },
+      onClick: d => { resetMap(setRouteInfo(d, year, distance)) },
+      onHover: d => { resetMap(setRouteInfo(d, year, distance)) },
       updateTriggers: {
-        getLineColor: [year, distance],
+        getLineColor: [year, distance, hoverID],
+        getRadius: [hoverID],
+        getLineWidth: [hoverID],
       },
     })
   ]
@@ -107,7 +100,7 @@ const map = new DeckGL({
   },
   getCursor: ({isDragging}) => isDragging ? 'grabbing' : 'crosshair',
   controller: true,
-  layers: getLayers("all", "all"),
+  layers: getLayers("all", "all", null),
 });
 
 const filters = document.getElementById("filters");
@@ -116,8 +109,35 @@ filters.addEventListener("submit", (event) => {
   const data = new FormData(filters);
   let year = data.get("year") || "all";
   let distance = data.get("distance") || "all";
-  map.setProps({layers: getLayers(year, distance)});
+  map.setProps({layers: getLayers(year, distance, null)});
 });
+
+function resetMap(info) {
+  if (info && info.object) {
+    const data = new FormData(filters);
+    let year = data.get("year") || "all";
+    let distance = data.get("distance") || "all";
+    map.setProps({layers: getLayers(year, distance, info.object.properties.ID)});
+  }
+  return info;
+}
+
+function setRouteInfo(info, year, distance) {
+  if (!info.object) { return; }
+  if (isVisible(info.object, year, distance)) {
+    const props = info.object.properties;
+    const noDisplay = ["id", "layerName", "Name", "Rides By Year"];
+    const propsHtml = Object.entries(props)
+      .filter(([key, val]) => !noDisplay.includes(key))
+      .map(renderProp)
+      .join('<br/>');
+    document.getElementById("routeName").innerHTML = props["Name"] || "";
+    document.getElementById('properties').innerHTML = "<div class='spacer'></div>" + propsHtml;
+    document.getElementById('selected').style.display = 'block';
+    document.getElementById('info').style.display = 'block';
+  }
+  return info;
+}
 
 addEventListener("keydown", (e) => {
   if (e.key === "Escape") {

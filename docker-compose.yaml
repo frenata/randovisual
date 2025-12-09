@@ -34,6 +34,8 @@ services:
       context: fe
     ports:
       - "8181:80"
+    volumes:
+      - ./fe:/usr/share/nginx/html
     environment:
       TILER_URL: http://localhost:7800
     depends_on:
