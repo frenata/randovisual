@@ -5,20 +5,24 @@ const { scaleSequential, interpolateViridis } = d3;
 import { PMTilesLayer } from "./pmTilesLayer.js";
 import { hexToRgb } from "./utils.js";
 
-const isVisible = (year, distance, route) => {
+const isVisible = (year, distance, riders, route) => {
   let minimumDistance = parseInt(distance);
   let routeDistance = parseInt(route.properties["Distance"]);
+  let minimumRiders = parseInt(riders);
+  let routeRiders   = parseInt(route.properties["Distinct Riders"]);
 
   return +(
     (year     === "all" || (route.properties["Distinct Years"] || []).includes(year)) &&
-    (distance === "all" || routeDistance > minimumDistance ))
+    (distance === "all" || routeDistance > minimumDistance ) &&
+    (riders   === "all" || routeRiders   > minimumRiders )
+  )
 }
 
 const tilerUrl = 'TILER_URL_PLACEHOLDER';
 const tilerClass = (tilerUrl.includes("pmtiles")) ? PMTilesLayer : MVTLayer; 
 const tilerData = (tilerUrl.includes("pmtiles")) ? new PMTiles('TILER_URL_PLACEHOLDER') : `${tilerUrl}/public.ride_routes/{z}/{x}/{y}.pbf`;
 
-const getLayers = (year, distance, hoverID) => {
+const getLayers = (year, distance, riders, hoverID) => {
   return [
     new TileLayer({
       id: 'osm-basemap',
@@ -56,17 +60,17 @@ const getLayers = (year, distance, hoverID) => {
         const color = colorMap(count+3);
         return hexToRgb(color);
       },
-      getFilterValue: d => isVisible(year, distance, d),
+      getFilterValue: d => isVisible(year, distance, riders, d),
       filterRange: [1, 1],
       extensions: [new DataFilterExtension({filterSize: 1})],
       getLineWidth: d => { return d.properties.ID === hoverID ? 100 : 20 },
       getRadius: d => { return d.properties.ID === hoverID ? 12 : 5 },
       lineWidthMinPixels: 2,
       pickable: true,
-      onClick: d => { resetMap(setRouteInfo(year, distance, d)) },
-      onHover: d => { resetMap(setRouteInfo(year, distance, d)) },
+      onClick: d => { resetMap(setRouteInfo(year, distance, riders, d)) },
+      onHover: d => { resetMap(setRouteInfo(year, distance, riders, d)) },
       updateTriggers: {
-        getFilterValue: [year, distance],
+        getFilterValue: [year, distance, riders],
         getLineColor: [year, distance, hoverID],
         getRadius: [hoverID],
         getLineWidth: [hoverID],
@@ -102,7 +106,7 @@ const map = new DeckGL({
   },
   getCursor: ({isDragging}) => isDragging ? 'grabbing' : 'crosshair',
   controller: true,
-  layers: getLayers("all", "all", null),
+  layers: getLayers("all", "all", "all", null),
 });
 
 const filters = document.getElementById("filters");
@@ -112,7 +116,8 @@ filters.addEventListener("submit", (event) => {
   const data = new FormData(filters);
   let year = data.get("year") || "all";
   let distance = data.get("distance") || "all";
-  map.setProps({layers: getLayers(year, distance, null)});
+  let riders = data.get("riders") || "all";
+  map.setProps({layers: getLayers(year, distance, riders, null)});
 });
 
 function resetMap(info) {
@@ -120,14 +125,15 @@ function resetMap(info) {
     const data = new FormData(filters);
     let year = data.get("year") || "all";
     let distance = data.get("distance") || "all";
-    map.setProps({layers: getLayers(year, distance, info.object.properties.ID)});
+    let riders = data.get("riders") || "all";
+    map.setProps({layers: getLayers(year, distance, riders, info.object.properties.ID)});
   }
   return info;
 }
 
-function setRouteInfo(year, distance, info) {
+function setRouteInfo(year, distance, riders, info) {
   if (!info.object) { return; }
-  if (isVisible(year, distance, info.object)) {
+  if (isVisible(year, distance, riders, info.object)) {
     const props = info.object.properties;
     const noDisplay = ["id", "layerName", "Name", "Rides By Year"];
     const propsHtml = Object.entries(props)

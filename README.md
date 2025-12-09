@@ -23,7 +23,7 @@ TODO :)
  - [x] provide some FE filtering
    - [x] start with changing year this way rather than via query param
    - [x] distance
-   - [ ] # of riders
+   - [x] # of riders
  - [x] improve route info panel
  - [ ] use TripsLayer to show routes populate over time
  - [ ] render 3d maps of the routes at high zooms
