@@ -1,15 +1,15 @@
-const { DeckGL, MVTLayer, TileLayer, BitmapLayer } = deck;
+const { DeckGL, MVTLayer, TileLayer, BitmapLayer, DataFilterExtension } = deck;
 const { PMTiles } = pmtiles;
 const { scaleSequential, interpolateViridis } = d3;
 
 import { PMTilesLayer } from "./pmTilesLayer.js";
 import { hexToRgb } from "./utils.js";
 
-const isVisible = (route, year, distance) => {
+const isVisible = (year, distance, route) => {
   let minimumDistance = parseInt(distance);
   let routeDistance = parseInt(route.properties["Distance"]);
 
-  return (
+  return +(
     (year     === "all" || (route.properties["Distinct Years"] || []).includes(year)) &&
     (distance === "all" || routeDistance > minimumDistance ))
 }
@@ -51,24 +51,26 @@ const getLayers = (year, distance, hoverID) => {
           return [255, 0, 0, 200];
         }
         const props = d.properties;
-        if (!isVisible(d, year, distance)) {
-          return [200, 200, 200, 0];
-        }
         const count = year === "all" ? props["Distinct Rides"] : JSON.parse(props["Rides By Year"])[year];
         const colorMap = scaleSequential(interpolateViridis).domain([1,25]);
         const color = colorMap(count+3);
         return hexToRgb(color);
       },
+      getFilterValue: d => isVisible(year, distance, d),
+      filterRange: [1, 1],
+      extensions: [new DataFilterExtension({filterSize: 1})],
       getLineWidth: d => { return d.properties.ID === hoverID ? 100 : 20 },
       getRadius: d => { return d.properties.ID === hoverID ? 12 : 5 },
       lineWidthMinPixels: 2,
       pickable: true,
-      onClick: d => { resetMap(setRouteInfo(d, year, distance)) },
-      onHover: d => { resetMap(setRouteInfo(d, year, distance)) },
+      onClick: d => { resetMap(setRouteInfo(year, distance, d)) },
+      onHover: d => { resetMap(setRouteInfo(year, distance, d)) },
       updateTriggers: {
+        getFilterValue: [year, distance],
         getLineColor: [year, distance, hoverID],
         getRadius: [hoverID],
         getLineWidth: [hoverID],
+        getPosition: [hoverID], // TODO: try to 'lift' the hovered route to the top?
       },
     })
   ]
@@ -104,6 +106,7 @@ const map = new DeckGL({
 });
 
 const filters = document.getElementById("filters");
+
 filters.addEventListener("submit", (event) => {
   event.preventDefault();
   const data = new FormData(filters);
@@ -122,9 +125,9 @@ function resetMap(info) {
   return info;
 }
 
-function setRouteInfo(info, year, distance) {
+function setRouteInfo(year, distance, info) {
   if (!info.object) { return; }
-  if (isVisible(info.object, year, distance)) {
+  if (isVisible(year, distance, info.object)) {
     const props = info.object.properties;
     const noDisplay = ["id", "layerName", "Name", "Rides By Year"];
     const propsHtml = Object.entries(props)
