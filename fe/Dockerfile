@@ -5,6 +5,7 @@ COPY favicon.ico     /usr/share/nginx/html
 COPY main.js         /usr/share/nginx/html
 COPY pmTilesLayer.js /usr/share/nginx/html
 COPY utils.js        /usr/share/nginx/html
+COPY url.js          /usr/share/nginx/html
 COPY main.css        /usr/share/nginx/html
 
 COPY entrypoint.sh /
