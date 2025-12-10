@@ -84,7 +84,7 @@ const renderProp = ([key, val]) => {
   if (key == "Distinct Years") {
     val = JSON.parse(val);
   } else if (key == "RWGPS URL") {
-    val = `<a href="https://${val}">${val}</a>`;
+    val = `<a href="https://${val}" target="_blank">${val}</a>`;
   }
   return `
     <span class='label'>${key}</span>
