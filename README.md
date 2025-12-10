@@ -32,3 +32,11 @@ TODO :)
  - [ ] build a new BE extractor to grab ride by *year* or *month* rather than by rider
  - [x] bug: non-visible routes can prevent selecting visible routes
  - [x] highlight and show route info on hover
+
+
+### Changelog
+
+ * 9 December 2025
+   * Don't render (rather than just don't show) filtered-out routes.
+   * Add a filter for # of riders.
+   * Add links to RWGPS.

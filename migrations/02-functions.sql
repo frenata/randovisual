@@ -21,6 +21,7 @@ with rides_per_year as
       round(min(ride.duration) / 60.0, 1) as "Fastest Known Time",
       jsonb_agg(distinct date_part('year', date))::text as "Distinct Years",
       any_value(aggr_years.rides_per_year)::text as "Rides By Year",
+      ('ridewithgps.com/routes/' || any_value(route.rwgps_id)::text) as "RWGPS URL",
       ST_AsMVTGeom(
         ST_Transform(geometry, 3857),
         ST_TileEnvelope(z, x, y),

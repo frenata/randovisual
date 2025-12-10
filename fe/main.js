@@ -82,7 +82,9 @@ const getLayers = (year, distance, riders, hoverID) => {
 
 const renderProp = ([key, val]) => {
   if (key == "Distinct Years") {
-    val = val.replaceAll("[", "").replace("]","").replaceAll(",", ", ");
+    val = JSON.parse(val);
+  } else if (key == "RWGPS URL") {
+    val = `<a href="https://${val}">${val}</a>`;
   }
   return `
     <span class='label'>${key}</span>

@@ -35,7 +35,8 @@ SELECT jsonb_build_object(
     'Distinct Riders', count(distinct rider_id),
     'Fastest Known Time', round(min(ride.duration) / 60.0, 1) || ' hours',
     'Distinct Years', jsonb_agg(distinct date_part('year', date)),
-    'Rides By Year', any_value(aggr_years.rides_per_year)
+    'Rides By Year', any_value(aggr_years.rides_per_year),
+    'RWGPS URL', ('ridewithgps.com/routes/' || any_value(route.rwgps_id)::text)
   )
 ) as route
 FROM route
