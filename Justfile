@@ -56,3 +56,17 @@ generate-pmtiles:
 
 push-pmtiles:
   gcloud storage cp data/routes.pmtiles gs://randovisual-tiles/
+
+test: test-be
+
+lint: lint-be
+
+[working-directory: 'be']
+lint-be:
+  uv run ruff check
+  uv run ty check
+  uv run ruff format --check
+
+[working-directory: 'be']
+test-be:
+  uv run pytest

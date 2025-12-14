@@ -27,7 +27,7 @@ class Member(BaseModel):
     def __hash__(self) -> int:
         return self.id.__hash__()
 
-    def __eq__(self, other) -> bool: # noqa: ANN001
+    def __eq__(self, other) -> bool:  # noqa: ANN001
         return self.id == other.id
 
     def add_name(self, name: str) -> None:
