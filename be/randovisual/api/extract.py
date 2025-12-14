@@ -3,6 +3,7 @@ import logging
 import sqlalchemy as sql
 import sqlalchemy.dialects.postgresql as psql
 from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 from randovisual.api.db import get_db
 from randovisual.db.models import Member, Ride, Route
@@ -16,7 +17,7 @@ router = APIRouter(prefix="/extract")
 @router.get("/rusa/year/{year}")
 async def extract_year(year: int, db: sql.Connection = Depends(get_db)) -> int:
     members = rusa.find_rusa_members(year)
-    stmt = psql.insert(Member).values(list(vars(member) for member in members.values()))
+    stmt = psql.insert(Member).values(vars(member) for member in members)
     stmt = stmt.on_conflict_do_update(
         index_elements=["id"],
         set_={
@@ -33,7 +34,7 @@ async def extract_year(year: int, db: sql.Connection = Depends(get_db)) -> int:
 
 
 @router.get("/rusa/rider/{rid}")
-async def extract_rides(rid: int, db: sql.Connection = Depends(get_db)) -> int:
+async def extract_rides(rid: str, db: sql.Connection = Depends(get_db)) -> int:
     # TODO: handle gracefully whether the rider doesn't exist?
     # should probably just go fetch them
     rider = rusa.Member(rid, "", 2000)
@@ -71,9 +72,8 @@ def _extract_route(  # noqa: PLR0913
     force: bool,
     db: sql.Connection,
 ) -> bool:
-    route_ = db.execute(
-        sql.select(Route).where(Route.rusa_id == rid).where(Route.category == category),
-    ).one_or_none()
+    route_ = Session(db).query(Route).where(Route.rusa_id == rid).where(Route.category == category).one_or_none()
+
     if route_ is not None and force is False:
         logger.warning("already have route, skipping")
         return False
@@ -86,6 +86,8 @@ def _extract_route(  # noqa: PLR0913
             existing_route=route_,
             rwgps_id=rwgps_id,
         )
+        if route is None:
+            return False
         stmt = psql.insert(Route).values(route)
         route.pop("rusa_id")
         route.pop("category")
@@ -105,7 +107,7 @@ def _extract_route(  # noqa: PLR0913
 
 @router.get("/rusa/route/perm/{rid}")
 async def extract_perm(rid: int, force: bool = False, db: sql.Connection = Depends(get_db)):
-    return _extract_route(rid, category="RUSAT", force=force, db=db)
+    return _extract_route(rid, category="RUSAT", rwgps_id=None, force=force, db=db)
 
 
 @router.get("/rusa/route/brevet/{rid}")

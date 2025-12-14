@@ -5,7 +5,7 @@ import os
 import re
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
@@ -21,13 +21,13 @@ class Member(BaseModel):
     names: set[str]
     years: set[int]
 
-    def __init__(self, mid: int, name: str, year: int) -> None:
+    def __init__(self, mid: str, name: str, year: int) -> None:
         super().__init__(id=mid, names={name}, years={year})
 
     def __hash__(self) -> int:
         return self.id.__hash__()
 
-    def __eq__(self, other: "Member") -> bool:
+    def __eq__(self, other) -> bool: # noqa: ANN001
         return self.id == other.id
 
     def add_name(self, name: str) -> None:
@@ -46,8 +46,8 @@ class Ride(BaseModel):
     name: str
 
 
-def find_rusa_members(year: int) -> [Member]:
-    rusa_members = {}
+def find_rusa_members(year: int) -> list[Member]:
+    rusa_members: dict[int, Member] = {}
 
     logger.info(f"Requesting yearly data for {year} ...")
     response = requests.get(f"https://rusa.org/yearly{year}.html")
@@ -70,10 +70,10 @@ def find_rusa_members(year: int) -> [Member]:
                 member.add_year(year)
 
     logger.info(f"Found {len(rusa_members)} total RUSA members in {year} ride data.")
-    return rusa_members
+    return list(rusa_members.values())
 
 
-def parse_ride(rider_id: int, tag: int) -> Ride | None:
+def parse_ride(rider_id: int, tag: Tag) -> Ride | None:
     """<tr class="individual-ride-result">
     <td align="left">RUSA-T132670</td>
     <td align="left">RUSAT</td>
@@ -86,27 +86,27 @@ def parse_ride(rider_id: int, tag: int) -> Ride | None:
     </tr>
     """
     try:
-        name = tag.select_one("td:nth-child(6)").text
-        category = tag.select_one("td:nth-child(2)").text
-        date = datetime.date.strptime(
-            tag.select_one("td:nth-child(4)").text,
+        name = tag.select_one("td:nth-child(6)").text  # ty: ignore[possibly-missing-attribute]
+        category = tag.select_one("td:nth-child(2)").text  # ty: ignore[possibly-missing-attribute]
+        date = datetime.datetime.strptime(
+            tag.select_one("td:nth-child(4)").text,  # ty: ignore[possibly-missing-attribute]
             "%Y/%m/%d",
         )
-        time = re.search(r"(\d+):(\d+)", tag.select_one("td:nth-child(7)").text)
+        time = re.search(r"(\d+):(\d+)", tag.select_one("td:nth-child(7)").text)  # ty: ignore[possibly-missing-attribute]
         duration = datetime.timedelta(
-            hours=int(time.group(1)),
-            minutes=int(time.group(2)),
+            hours=int(time.group(1)),  # ty: ignore[possibly-missing-attribute]
+            minutes=int(time.group(2)),  # ty: ignore[possibly-missing-attribute]
         )
 
         if name == "Paris-Brest-Paris":
             rusa_id = 999999
         else:
-            route_link = f"https://rusa.org{tag.select_one('td:nth-child(6) > a').attrs['href']}"
+            route_link = f"https://rusa.org{tag.select_one('td:nth-child(6) > a').attrs['href']}"  # ty: ignore[possibly-missing-attribute]
 
             if "permid" in route_link:
-                rusa_id = int(re.search(r"permid=(\d+)", route_link).group(1))
+                rusa_id = int(re.search(r"permid=(\d+)", route_link).group(1))  # ty: ignore[possibly-missing-attribute]
             elif "rtid" in route_link:
-                rusa_id = int(re.search(r"rtid=(\d+)", route_link).group(1))
+                rusa_id = int(re.search(r"rtid=(\d+)", route_link).group(1))  # ty: ignore[possibly-missing-attribute]
             else:
                 raise ValueError(
                     f"unknown route link type: {route_link} for rider: {rider_id}",
@@ -115,7 +115,7 @@ def parse_ride(rider_id: int, tag: int) -> Ride | None:
         return Ride(
             rusa_id=rusa_id,
             date=date,
-            duration=duration.total_seconds() / 60,
+            duration=duration.total_seconds() // 60,  # ty: ignore[invalid-argument-type]
             rider_id=rider_id,
             category=category,
             name=name,
@@ -125,7 +125,7 @@ def parse_ride(rider_id: int, tag: int) -> Ride | None:
         return None
 
 
-def find_rider_results(member: Member) -> [Ride]:
+def find_rider_results(member: Member) -> list[Ride]:
     logger.info(f"Requesting ride data for {member.id} ...")
 
     keys = [
@@ -163,7 +163,7 @@ def find_rider_results(member: Member) -> [Ride]:
     return list(filter(bool, map(functools.partial(parse_ride, member.id), results)))
 
 
-def get_rwgps_info(rwgps_id: int) -> str:
+def get_rwgps_info(rwgps_id: str) -> str:
     response = requests.get(
         f"https://ridewithgps.com/api/v1/routes/{rwgps_id}.json",
         headers={
@@ -177,7 +177,7 @@ def get_rwgps_info(rwgps_id: int) -> str:
     return f"LINESTRING Z({points})"
 
 
-def _get_perm_info(route_id: int, category: str, existing_route: models.Route | None = None) -> dict:
+def _get_perm_info(route_id: int, category: str, existing_route: models.Route | None = None) -> dict | None:
     response = requests.get(
         f"https://rusa.org/cgi-bin/permview_GF.pl?permid={route_id}",
     )
@@ -187,15 +187,18 @@ def _get_perm_info(route_id: int, category: str, existing_route: models.Route | 
     rwgps = html.find(
         lambda tag: tag.name == "a" and "ridewithgps" in tag.attrs.get("href", ""),
     )
-    name = html.select_one("table > tr:nth-child(2) > td").text
-    climbing = int(html.select_one("table > tr:nth-child(6) > td").text)
+    try:
+        name = html.select_one("table > tr:nth-child(2) > td").text  # ty: ignore[possibly-missing-attribute]
+        climbing = int(html.select_one("table > tr:nth-child(6) > td").text)  # ty: ignore[possibly-missing-attribute]
 
-    response = {
-        "rusa_id": route_id,
-        "name": name,
-        "climbing": climbing,
-        "category": category,
-    }
+        response = {
+            "rusa_id": route_id,
+            "name": name,
+            "climbing": climbing,
+            "category": category,
+        }
+    except Exception:
+        return None
 
     if rwgps is None:
         return None
@@ -212,7 +215,7 @@ def _get_perm_info(route_id: int, category: str, existing_route: models.Route | 
     return response
 
 
-def _get_brevet_info(route_id: int, name: str, category: str, rwgps_id: str | None = None) -> dict:
+def _get_brevet_info(route_id: int, name: str | None, category: str, rwgps_id: str | None = None) -> dict:
     response = requests.get(
         f"https://rusa.org/cgi-bin/routesearch_PF.pl?rtid={route_id}",
     )
@@ -221,9 +224,10 @@ def _get_brevet_info(route_id: int, name: str, category: str, rwgps_id: str | No
 
     response = {"rusa_id": route_id, "name": name, "category": category}
     try:
-        climbing = int(html.select_one("td:nth-child(4)").text.strip())
-        # NOTE: brevets only show climbing in ft, so we convert to m
-        response["climbing"] = int(climbing / 3.281)
+        if (tag := html.select_one("td:nth-child(4)")) and tag is not None:
+            climbing = int(tag.text.strip())
+            # NOTE: brevets only show climbing in ft, so we convert to m
+            response["climbing"] = int(climbing / 3.281)
     except Exception:
         logger.info("no climbing data found")
 
@@ -237,12 +241,12 @@ def _get_brevet_info(route_id: int, name: str, category: str, rwgps_id: str | No
 
 def get_route_info(
     route_id: int,
-    name: str,
+    name: str | None,
     category: str,
     *,
     existing_route: models.Route | None = None,
     rwgps_id: str | None = None,
-) -> dict:
+) -> dict | None:
     if category in ["RUSAT", "ACPT-SR6"]:
         return _get_perm_info(route_id, category, existing_route)
     return _get_brevet_info(route_id, name, category, rwgps_id)
