@@ -2,7 +2,7 @@ services:
   db:
     image: postgis/postgis:18-3.6
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       POSTGRES_PASSWORD: rusa
       POSTGRES_USER: rusa
@@ -13,15 +13,16 @@ services:
       context: tiler
     ports:
       - "7800:7800"
-      - "8080:8080"
     env_file:
       - .env.local
     depends_on:
       - db
   api:
     build:
-      context: .
-      dockerfile: randovisual/Dockerfile
+      context: be
+      dockerfile: Dockerfile
+    volumes:
+      - ./be:/app
     ports:
       - "8000:8000"
     env_file:

@@ -10,7 +10,7 @@ auth:
 
 # Build and push API image
 build-api:
-    docker build -t {{REGISTRY}}/api:latest -f randovisual/Dockerfile .
+    cd be && docker build -t {{REGISTRY}}/api:latest .
     docker push {{REGISTRY}}/api:latest
     gcloud run services update randovisual-api --region={{REGION}} --image={{REGISTRY}}/api:latest
 
