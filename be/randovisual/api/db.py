@@ -7,9 +7,11 @@ def get_db_url():
         url = url.replace("postgresql://", "postgresql+psycopg://", 1)
     return url
 
+def get_engine():
+    return sqlalchemy.create_engine(get_db_url())
+
 def get_db():
-    engine = sqlalchemy.create_engine(get_db_url())
-    with engine.begin() as conn:
+    with get_engine().begin() as conn:
         yield conn
 
 

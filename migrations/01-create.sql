@@ -12,5 +12,8 @@ create table if not exists ride (
 create table if not exists route (
 	rusa_id int primary key,
 	rwgps_id int,
-	geometry Geometry(LinestringZ, 4326)
+	geometry Geometry(LinestringZ, 4326),
+	distance numeric generated always as
+             (round(st_length(st_transform(geometry,5070)) / 1000.0)) stored
+
 );
