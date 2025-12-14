@@ -70,3 +70,7 @@ lint-be:
 [working-directory: 'be']
 test-be:
   uv run pytest
+
+[working-directory: 'be']
+coverage format='term':
+  uv run pytest --cov=randovisual --cov-branch --cov-report={{format}} --junitxml=junit.xml -o junit_family=legacy
