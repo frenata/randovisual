@@ -14,7 +14,7 @@ router = APIRouter(prefix="/extract")
 
 
 @router.get("/rusa/year/{year}")
-async def extract_year(year: int, db=Depends(get_db)) -> int:
+async def extract_year(year: int, db: sql.Connection = Depends(get_db)) -> int:
     members = rusa.find_rusa_members(year)
     stmt = psql.insert(Member).values(list(vars(member) for member in members.values()))
     stmt = stmt.on_conflict_do_update(
@@ -33,17 +33,13 @@ async def extract_year(year: int, db=Depends(get_db)) -> int:
 
 
 @router.get("/rusa/rider/{rid}")
-async def extract_rides(rid: int, db=Depends(get_db)) -> int:
+async def extract_rides(rid: int, db: sql.Connection = Depends(get_db)) -> int:
     # TODO: handle gracefully whether the rider doesn't exist?
     # should probably just go fetch them
     rider = rusa.Member(rid, "", 2000)
-    # breakpoint()
     rides = rusa.find_rider_results(rider)
-    # breakpoint()
     if rides:
-        rides_no_name = [
-            {k: v for k, v in vars(ride).items() if k not in ["name"]} for ride in rides
-        ]
+        rides_no_name = [{k: v for k, v in vars(ride).items() if k not in ["name"]} for ride in rides]
         stmt = psql.insert(Ride).values(rides_no_name)
         stmt = stmt.on_conflict_do_nothing(
             index_elements=["rusa_id", "category", "date", "duration", "rider_id"],
@@ -66,15 +62,15 @@ async def extract_rides(rid: int, db=Depends(get_db)) -> int:
     return count
 
 
-def _extract_route(
+def _extract_route(  # noqa: PLR0913
     rid: int,
     name: str | None = None,
     *,
     category: str,
     rwgps_id: str | None,
     force: bool,
-    db,
-):
+    db: sql.Connection,
+) -> bool:
     route_ = db.execute(
         sql.select(Route).where(Route.rusa_id == rid).where(Route.category == category),
     ).one_or_none()
@@ -84,13 +80,18 @@ def _extract_route(
     if route_ is not None and force is True:
         logger.info("already have route, enriching")
         route = rusa.get_route_info(
-            rid, name, category, existing_route=route_, rwgps_id=rwgps_id,
+            rid,
+            name,
+            category,
+            existing_route=route_,
+            rwgps_id=rwgps_id,
         )
         stmt = psql.insert(Route).values(route)
         route.pop("rusa_id")
         route.pop("category")
         stmt = stmt.on_conflict_do_update(
-            index_elements=["rusa_id", "category"], set_=route,
+            index_elements=["rusa_id", "category"],
+            set_=route,
         )
         db.execute(stmt)
         return True
@@ -99,15 +100,20 @@ def _extract_route(
         stmt = psql.insert(Route).values(route)
         db.execute(stmt)
         return True
+    return False
 
 
 @router.get("/rusa/route/perm/{rid}")
-async def extract_route(rid: int, force: bool = False, db=Depends(get_db)):
+async def extract_perm(rid: int, force: bool = False, db: sql.Connection = Depends(get_db)):
     return _extract_route(rid, category="RUSAT", force=force, db=db)
 
 
 @router.get("/rusa/route/brevet/{rid}")
-async def extract_route(
-    rid: int, category: str, rwgps_id: str, force: bool = False, db=Depends(get_db),
+async def extract_brevet(
+    rid: int,
+    category: str,
+    rwgps_id: str,
+    force: bool = False,
+    db: sql.Connection = Depends(get_db),
 ):
     return _extract_route(rid, category=category, rwgps_id=rwgps_id, force=force, db=db)
