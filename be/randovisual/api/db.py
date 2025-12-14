@@ -1,5 +1,7 @@
-import sqlalchemy
 import os
+
+import sqlalchemy
+
 
 def get_db_url():
     url = os.getenv("DATABASE_URL")
@@ -7,11 +9,11 @@ def get_db_url():
         url = url.replace("postgresql://", "postgresql+psycopg://", 1)
     return url
 
+
 def get_engine():
     return sqlalchemy.create_engine(get_db_url())
+
 
 def get_db():
     with get_engine().begin() as conn:
         yield conn
-
-

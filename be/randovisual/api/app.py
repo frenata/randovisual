@@ -1,4 +1,5 @@
 import fastapi
+
 from . import extract
 
 app = fastapi.FastAPI()

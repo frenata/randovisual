@@ -1,16 +1,18 @@
-import os
 import datetime
-from pydantic import BaseModel
 import functools
 import logging
+import os
 import re
+
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from pydantic import BaseModel
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
+
 
 class Member(BaseModel):
     id: int
@@ -41,6 +43,7 @@ class Ride(BaseModel):
     category: str
     name: str
 
+
 def find_rusa_members(year: int):
     rusa_members = dict()
 
@@ -70,9 +73,9 @@ def find_rusa_members(year: int):
     logger.info(f"Found {len(rusa_members)} total RUSA members in {year} ride data.")
     return rusa_members
 
+
 def parse_ride(rider_id, tag):
-    """
-    <tr class="individual-ride-result">
+    """<tr class="individual-ride-result">
     <td align="left">RUSA-T132670</td>
     <td align="left">RUSAT</td>
     <td align="right">101</td>
@@ -83,43 +86,78 @@ def parse_ride(rider_id, tag):
     <td align="center"></td>
     </tr>
     """
-
     try:
         name = tag.select_one("td:nth-child(6)").text
         category = tag.select_one("td:nth-child(2)").text
-        date = datetime.date.strptime(tag.select_one("td:nth-child(4)").text, "%Y/%m/%d")
-        time = re.search(r'(\d+):(\d+)', tag.select_one("td:nth-child(7)").text)
-        duration = datetime.timedelta(hours=int(time.group(1)), minutes=int(time.group(2)))
+        date = datetime.date.strptime(
+            tag.select_one("td:nth-child(4)").text, "%Y/%m/%d",
+        )
+        time = re.search(r"(\d+):(\d+)", tag.select_one("td:nth-child(7)").text)
+        duration = datetime.timedelta(
+            hours=int(time.group(1)), minutes=int(time.group(2)),
+        )
 
         if name == "Paris-Brest-Paris":
             rusa_id = 999999
         else:
-            route_link = f"https://rusa.org{tag.select_one("td:nth-child(6) > a").attrs["href"]}"
+            route_link = (
+                f"https://rusa.org{tag.select_one('td:nth-child(6) > a').attrs['href']}"
+            )
 
             if "permid" in route_link:
-                rusa_id = int(re.search(r'permid=(\d+)', route_link).group(1))
+                rusa_id = int(re.search(r"permid=(\d+)", route_link).group(1))
             elif "rtid" in route_link:
-                rusa_id = int(re.search(r'rtid=(\d+)', route_link).group(1))
+                rusa_id = int(re.search(r"rtid=(\d+)", route_link).group(1))
             else:
-                raise ValueError(f"unknown route link type: {route_link} for rider: {rider_id}")
+                raise ValueError(
+                    f"unknown route link type: {route_link} for rider: {rider_id}",
+                )
 
-        ride = Ride(rusa_id=rusa_id, date=date, duration=duration.total_seconds() / 60, rider_id=rider_id, category=category, name=name)
+        ride = Ride(
+            rusa_id=rusa_id,
+            date=date,
+            duration=duration.total_seconds() / 60,
+            rider_id=rider_id,
+            category=category,
+            name=name,
+        )
         return ride
     except:
         logger.error("error parsing ride result")
         return None
 
 
-
-
-
 def find_rider_results(member: Member):
     logger.info(f"Requesting ride data for {member.id} ...")
 
-    keys = ["mid", "sname", "club", "sortby", "regid", "type", "dist", "date", "rtid", "esortby", "permid", "permdate", "award", "year", "submit"]
-    payload = {**{key: "" for key in keys}, "mid": str(member.id), "sortby": "date", "esortby": "name", "submit": "search"}
+    keys = [
+        "mid",
+        "sname",
+        "club",
+        "sortby",
+        "regid",
+        "type",
+        "dist",
+        "date",
+        "rtid",
+        "esortby",
+        "permid",
+        "permdate",
+        "award",
+        "year",
+        "submit",
+    ]
+    payload = {
+        **dict.fromkeys(keys, ""),
+        "mid": str(member.id),
+        "sortby": "date",
+        "esortby": "name",
+        "submit": "search",
+    }
     # mid=14039&sname=&club=&sortby=date&regid=&type=&dist=&date=2024&rtid=&esortby=name&permid=&permdate=&award=&year=&submit=search
-    response = requests.post("https://rusa.org/cgi-bin/resultsearch_PF.pl", data=payload)
+    response = requests.post(
+        "https://rusa.org/cgi-bin/resultsearch_PF.pl", data=payload,
+    )
     response.raise_for_status()
 
     html = BeautifulSoup(response.text, features="html.parser")
@@ -129,24 +167,42 @@ def find_rider_results(member: Member):
 
 
 def get_rwgps_info(rwgps_id):
-    response = requests.get(f"https://ridewithgps.com/api/v1/routes/{rwgps_id}.json", headers={"x-rwgps-api-key": os.getenv("RWGPS_API_KEY"), "x-rwgps-auth-token": os.getenv("RWGPS_API_TOKEN")})
+    response = requests.get(
+        f"https://ridewithgps.com/api/v1/routes/{rwgps_id}.json",
+        headers={
+            "x-rwgps-api-key": os.getenv("RWGPS_API_KEY"),
+            "x-rwgps-auth-token": os.getenv("RWGPS_API_TOKEN"),
+        },
+    )
     response.raise_for_status()
 
-    points = ','.join(f'{p["x"]} {p["y"]} {p["e"]}' for p in response.json().get("route").get("track_points"))
+    points = ",".join(
+        f"{p['x']} {p['y']} {p['e']}"
+        for p in response.json().get("route").get("track_points")
+    )
     geometry = f"LINESTRING Z({points})"
     return geometry
 
 
-def _get_perm_info(route_id, category, existing_route = None):
-    response = requests.get(f"https://rusa.org/cgi-bin/permview_GF.pl?permid={route_id}")
+def _get_perm_info(route_id, category, existing_route=None):
+    response = requests.get(
+        f"https://rusa.org/cgi-bin/permview_GF.pl?permid={route_id}",
+    )
     response.raise_for_status()
     html = BeautifulSoup(response.text, features="html.parser")
 
-    rwgps = html.find(lambda tag: tag.name == "a" and "ridewithgps" in tag.attrs.get("href", ""))
+    rwgps = html.find(
+        lambda tag: tag.name == "a" and "ridewithgps" in tag.attrs.get("href", ""),
+    )
     name = html.select_one("table > tr:nth-child(2) > td").text
     climbing = int(html.select_one("table > tr:nth-child(6) > td").text)
 
-    response = {"rusa_id": route_id, "name": name, "climbing": climbing, "category": category}
+    response = {
+        "rusa_id": route_id,
+        "name": name,
+        "climbing": climbing,
+        "category": category,
+    }
 
     if rwgps is None:
         return None
@@ -164,7 +220,9 @@ def _get_perm_info(route_id, category, existing_route = None):
 
 
 def _get_brevet_info(route_id, name: str, category: str, rwgps_id: str | None = None):
-    response = requests.get(f"https://rusa.org/cgi-bin/routesearch_PF.pl?rtid={route_id}")
+    response = requests.get(
+        f"https://rusa.org/cgi-bin/routesearch_PF.pl?rtid={route_id}",
+    )
     response.raise_for_status()
     html = BeautifulSoup(response.text, features="html.parser")
 
@@ -183,8 +241,15 @@ def _get_brevet_info(route_id, name: str, category: str, rwgps_id: str | None = 
 
     return response
 
-def get_route_info(route_id, name: str, category: str, *, existing_route = None, rwgps_id: str | None = None):
+
+def get_route_info(
+    route_id,
+    name: str,
+    category: str,
+    *,
+    existing_route=None,
+    rwgps_id: str | None = None,
+):
     if category in ["RUSAT", "ACPT-SR6"]:
         return _get_perm_info(route_id, category, existing_route)
-    else:
-        return _get_brevet_info(route_id, name, category, rwgps_id)
+    return _get_brevet_info(route_id, name, category, rwgps_id)

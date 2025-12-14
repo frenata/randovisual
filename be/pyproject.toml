@@ -23,7 +23,15 @@ dev = [
     "pytest-vcr>=1.0.2",
     "ruff>=0.14.6",
     "testcontainers[postgres]>=4.13.3",
+    "ty>=0.0.1a34",
 ]
+
+[tool.ruff]
+exclude = ["utils"]
 
 [tool.ruff.lint]
 select = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"**/{tests}/*" = ["S101", "ANN", "D", "ARG", "T", "PT", "PTH"]
