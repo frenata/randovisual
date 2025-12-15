@@ -19,3 +19,4 @@ infra/terraform.tfstate*
 # ignored
 data/
 be/.coverage
+be/junit.xml

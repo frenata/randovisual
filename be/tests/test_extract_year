@@ -1,0 +1,172 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, zstd
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.5
+    method: GET
+    uri: https://rusa.org/yearly1999.html
+  response:
+    body:
+      string: '<HTML><HEAD><TITLE>1999 Summary of Results</TITLE></HEAD>
+
+        <BODY>
+
+        <H1>1999 Summary of Results</H1>
+
+        <TABLE BORDER>
+
+        <TR>
+
+        <TH>Name</TH>
+
+        <TH>Awards</TH>
+
+        <TH>Location</TH>
+
+        <TH>200 km</TH>
+
+        <TH>300 km</TH>
+
+        <TH>400 km</TH>
+
+        <TH>600 km</TH>
+
+        <TH>1000 km</TH>
+
+        <TH>Other</TH>
+
+        </TR>
+
+        <TR>
+
+        <TD>DUCK, Donald (1234)</TD>
+
+        <TD>SR,1k</TD>
+
+        <TD>CA: Davis</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>34:56</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>&nbsp;</TD>
+
+        </TR>
+
+        <TR>
+
+        <TD>&nbsp;</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>WI: Beloit</TD>
+
+        <TD>08:50</TD>
+
+        <TD>13:44</TD>
+
+        <TD>18:47</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>&nbsp;</TD>
+
+        </TR>
+
+        <TR>
+
+        <TD>DUCK, Daisy (1235)</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>WA: Seattle</TD>
+
+        <TD>10:01</TD>
+
+        <TD>16:45</TD>
+
+        <TD>21:20</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>&nbsp;</TD>
+
+        </TR>
+
+        <TR>
+
+        <TD>DUCK, Daffy (1236)</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>WA: Seattle</TD>
+
+        <TD>10:01</TD>
+
+        <TD>16:45</TD>
+
+        <TD>21:20</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>&nbsp;</TD>
+
+        <TD>&nbsp;</TD>
+
+        </TR>
+
+        </TABLE>
+
+        <P>
+
+        <BR>SR designates eligibility for ACP Super Randonneur award (412)
+
+        <BR>1k designates eligibility for RUSA 1000km distance award (360)
+
+        <BR>2k designates eligibility for RUSA 2000km distance award (76)
+
+        <BR>3k designates eligibility for RUSA 3000km distance award (10)
+
+        <BR>4k designates eligibility for RUSA 4000km distance award (0)
+
+        <BR>5k designates eligibility for RUSA 5000km distance award (0)
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - text/html
+      Date:
+      - Sun, 14 Dec 2025 23:16:18 GMT
+      ETag:
+      - W/"5d045e73-2a621"
+      Last-Modified:
+      - Sat, 15 Jun 2019 02:56:51 GMT
+      Server:
+      - nginx/1.22.1
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,270 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, zstd
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.5
+    method: GET
+    uri: https://rusa.org/cgi-bin/routesearch_PF.pl?rtid=1405
+  response:
+    body:
+      string: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n<!DOCTYPE html>\n<html lang=\"en\" dir=\"ltr\">\n
+        \ <head>\n    <meta charset=\"utf-8\" />\n<meta name=\"Generator\" content=\"Drupal
+        10 (https://www.drupal.org)\" />\n<meta name=\"MobileOptimized\" content=\"width\"
+        />\n<meta name=\"HandheldFriendly\" content=\"true\" />\n<meta name=\"viewport\"
+        content=\"width=device-width, initial-scale=1.0\" />\n<link rel=\"icon\" href=\"/Images/favicon.ico\"
+        type=\"image/gif\" />\n<link rel=\"canonical\" href=\"/pages/blank\" />\n<link
+        rel=\"shortlink\" href=\"/node/210\" />\n\n    <title>Randonneurs USA</title>\n
+        \   <link rel=\"stylesheet\" media=\"all\" href=\"/transitional/css-0.css\"
+        />\n<link rel=\"stylesheet\" media=\"all\" href=\"/transitional/css-1.css\"
+        />\n<link rel=\"stylesheet\" media=\"print\" href=\"/transitional/css-2.css\"
+        />\n<link rel=\"stylesheet\" media=\"all\" href=\"/transitional/css-3.css\"
+        />\n\n    \n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0,
+        maximum-scale=1.0, user-scalable=no\">\n    <meta name=\"HandheldFriendly\"
+        content=\"true\" />\n    <meta name=\"apple-touch-fullscreen\" content=\"YES\"
+        />\n<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"/css/oldsite.css\"
+        /><link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"//cdnjs.cloudflare.com/ajax/libs/chosen/1.0/chosen.min.css\"
+        /><script type=\"text/javascript\" src=\"/transitional/js-0.js\"></script><script
+        type=\"text/javascript\" src=\"/transitional/js-1.js\"></script><script type=\"text/javascript\"
+        src=\"//cdnjs.cloudflare.com/ajax/libs/chosen/1.0/chosen.jquery.min.js\"></script><script
+        type=\"text/javascript\" src=\"/scripts/global.js\"></script><script type=\"text/javascript\"
+        src=\"/scripts/header_cgi.js\"></script>  </head>\n  <body class=\"oldsite\">\n
+        \   <a href=\"#main-content\" class=\"visually-hidden focusable\">\n      Skip
+        to main content\n    </a>\n    \n      <div class=\"dialog-off-canvas-main-canvas\"
+        data-off-canvas-main-canvas>\n    <div class=\"page nid-210\">\n  <a name=\"Top\"
+        id=\"Top\"></a>\n  <header id=\"header\" class=\"header\" role=\"header\">\n
+        \   <div class=\"container top\">\n        <div class=\"region region-header\">\n
+        \   <nav role=\"navigation\" aria-labelledby=\"block-rusa-theme-useraccountmenu-menu\"
+        id=\"block-rusa-theme-useraccountmenu\" class=\"block block-menu navigation
+        menu--account\">\n            \n  <h2 class=\"visually-hidden\" id=\"block-rusa-theme-useraccountmenu-menu\">User
+        account menu</h2>\n  \n\n        \n                <ul class=\"menu menu--level-1\">\n
+        \                   <li class=\"menu-item\">\n        <a href=\"/user/login\"
+        data-drupal-link-system-path=\"user/login\">Member Log in</a>\n              </li>\n
+        \       </ul>\n  \n\n\n  </nav>\n<div id=\"block-rusa-theme-branding\" class=\"block
+        block-system block-system-branding-block\">\n  \n    \n    <div class=\"col-xs-6
+        col-sm-2 col-md-2\">\n    <span class=\"site-logo\">\n      <a href=\"/\">\n
+        \       <img src=\"/Images/rusacr.png\" alt=\"Home page image\" />\n      </a>\n
+        \   </span>\n  </div>\n\n  <div class=\"col-xs-4 col-sm-6 col-md-10\">\n    <span
+        class=\"site-title\">\n      <h1 class=\"title\">Randonneurs USA</h1>\n    </span>\n
+        \ </div>\n\n  <div class=\"col-xs-4 col-sm-4\">\n\t\t<button type=\"button\"
+        class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#main-menu-inner\">\n\t\t
+        \ <span class=\"sr-only\">Toggle navigation</span>\n\t\t  <span class=\"icon-bar\"></span>\n\t\t
+        \ <span class=\"icon-bar\"></span>\n\t\t  <span class=\"icon-bar\"></span>\n\t\t</button>\n\t</div>\n</div>\n\n
+        \ </div>\n\n    </div>\n  </header>\n\n  \n    <nav id=\"main-menu\" class=\"navbar
+        navbar-default\" role=\"navigation\">\n  \t<div class=\"collapse navbar-collapse\"
+        id=\"main-menu-inner\">\n      <div class=\"container\">\n          <div class=\"region
+        region-main-menu\">\n    <nav role=\"navigation\" aria-labelledby=\"block-rusa-theme-main-menu-menu\"
+        id=\"block-rusa-theme-main-menu\" class=\"block block-menu navigation menu--main\">\n
+        \           \n  <h2 class=\"visually-hidden\" id=\"block-rusa-theme-main-menu-menu\">Main
+        navigation</h2>\n  \n\n        \n                <ul class=\"menu menu--level-1\">\n
+        \                   <li class=\"menu-item\">\n        <a href=\"/\" data-drupal-link-system-path=\"&lt;front&gt;\">Home</a>\n
+        \             </li>\n                <li class=\"menu-item menu-item--expanded\">\n
+        \       <a href=\"/about\" data-drupal-link-system-path=\"node/4\">About</a>\n
+        \                                 <ul class=\"menu\">\n                    <li
+        class=\"menu-item\">\n        <a href=\"/about\" data-drupal-link-system-path=\"node/4\">About
+        Randonneuring</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/pages/mission-values-objectives\" title=\"RUSA Mission
+        and Values\" data-drupal-link-system-path=\"node/1592\">Our Mission-Values-Goals</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/pages/teamrando\" title=\"Team Events Information and Rules\" data-drupal-link-system-path=\"node/231\">Team
+        Events</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/pages/audax-intro\" title=\"About Audax (UAF) Style Brevets\"
+        data-drupal-link-system-path=\"node/1589\">Audax (UAF) Events</a>\n              </li>\n
+        \               <li class=\"menu-item\">\n        <a href=\"/climbing-faq-for-riders\"
+        data-drupal-link-system-path=\"node/1791\">Climbing</a>\n              </li>\n
+        \               <li class=\"menu-item\">\n        <a href=\"/pages/gravel-program\"
+        title=\"RUSA&#039;s Gravel Initiative\" data-drupal-link-system-path=\"node/1593\">Dirt
+        and Gravel Riding</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/pages/rider-stories\" title=\"Ride Stories and links to
+        member blogs\" data-drupal-link-system-path=\"node/213\">Rider Stories</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/pages/rando-org-links\" title=\"Local and International Randonneuring
+        Organizations\" data-drupal-link-system-path=\"node/1775\">Local &amp; International
+        Links</a>\n              </li>\n        </ul>\n  \n              </li>\n                <li
+        class=\"menu-item menu-item--expanded\">\n        <a href=\"/cgi-bin/resultsearch_GF.pl\">Search</a>\n
+        \                                 <ul class=\"menu\">\n                    <li
+        class=\"menu-item\">\n        <a href=\"/cgi-bin/resultsearch_GF.pl\">Results</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/cgi-bin/eventsearch_GF.pl\">Rides</a>\n              </li>\n                <li
+        class=\"menu-item\">\n        <a href=\"/cgi-bin/permsearch_GF.pl\" data-drupal-link-system-path=\"cgi-bin/permsearch_GF.pl\">Permanent
+        Routes</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/cgi-bin/routesearch_GF.pl\">Brevet Routes</a>\n              </li>\n
+        \               <li class=\"menu-item\">\n        <a href=\"/cgi-bin/membersearch_GF.pl\">Members</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/cgi-bin/officialsearch_GF.pl\">Officials &amp; Volunteers</a>\n              </li>\n
+        \               <li class=\"menu-item\">\n        <a href=\"/cgi-bin/regionsearch_PF.pl\">Regions</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/cgi-bin/clubsearch_GF.pl\">Cycling Clubs</a>\n              </li>\n
+        \       </ul>\n  \n              </li>\n                <li class=\"menu-item
+        menu-item--expanded\">\n        <a href=\"/memberservices.html\">Members</a>\n
+        \                                 <ul class=\"menu\">\n                    <li
+        class=\"menu-item\">\n        <a href=\"/pages/memberservices\" data-drupal-link-system-path=\"node/233\">Join/Renew
+        Membership</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/pages/new-member-guide\" title=\"New Member Getting Started
+        Guide\" data-drupal-link-system-path=\"node/1561\">New-Member Guide</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/pages/awards\" data-drupal-link-system-path=\"node/1642\">Awards</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/cgi-bin/store_GF.pl\">Online Store</a>\n              </li>\n                <li
+        class=\"menu-item\">\n        <a href=\"/pages/between-controls\" data-drupal-link-system-path=\"node/1536\">Between
+        Controls E-News</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/pages/magazine\" data-drupal-link-system-path=\"node/227\">Magazine</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"https://www.pageturnpro.com/Progress-Printing/94414-Handbook/sdefault.html\">Handbook</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/pages/incident-procedure\" data-drupal-link-system-path=\"node/449\">Incident
+        Procedure</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/pages/member-passings\" data-drupal-link-system-path=\"node/220\">Passings</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/pages/RUSAphotos\" data-drupal-link-system-path=\"node/236\">Photo
+        Gallery</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/pages/rusaorg-user-guide/creating-your-rusaorg-website-account\"
+        data-drupal-link-system-path=\"node/1482\">Creating your RUSA.org website
+        account</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"https://drive.google.com/file/d/1YnX6gfnVbhtqkvo-wFK1i3ghg61rbTHx/view\"
+        title=\"Help Wanted or Volunteering Opportunities with RUSA\">Volunteering
+        Opportunities</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"https://drive.google.com/file/d/1tPVZ7EOU8qF8zd3hAOFoi2jNywlIu91x/view?usp=sharing\"
+        title=\"Links to our advertisers in American Randonneur\">Support our Advertisers</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/pages/external_vendors\" title=\"RUSA external apparel vendors\" data-drupal-link-system-path=\"node/295\">External
+        Apparel Vendors</a>\n              </li>\n        </ul>\n  \n              </li>\n
+        \               <li class=\"menu-item menu-item--expanded\">\n        <a href=\"/pages/permanents\"
+        data-drupal-link-system-path=\"node/235\">PERMANENTS</a>\n                                  <ul
+        class=\"menu\">\n                    <li class=\"menu-item\">\n        <a
+        href=\"/pages/permanents\" title=\"Perm Program Overview\" data-drupal-link-system-path=\"node/235\">Overview</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/pages/permFAQ\" title=\"Perm Program FAQ\" data-drupal-link-system-path=\"node/554\">FAQ</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/pages/permRiderRules\" title=\"Perm Rules for Riders\" data-drupal-link-system-path=\"node/228\">Rules
+        for Riders</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/cgi-bin/permsearch_GF.pl\" data-drupal-link-system-path=\"cgi-bin/permsearch_GF.pl\">Route
+        Search</a>\n              </li>\n                <li class=\"menu-item menu-item--expanded\">\n
+        \       <a href=\"/pages/permanents-route-submission\" title=\"Perm Route
+        Submission Form\" data-drupal-link-system-path=\"node/1491\">Route Submission</a>\n
+        \                                 <ul class=\"menu\">\n                    <li
+        class=\"menu-item\">\n        <a href=\"/pages/rulesPermContributors\" data-drupal-link-system-path=\"node/1572\">Rules
+        for Perm Route Contributors</a>\n              </li>\n                <li
+        class=\"menu-item\">\n        <a href=\"https://docs.google.com/document/d/1XGNW2IXpUBDrrsO3ozg78nzFHhW3_jn9gZAFaljP9Sk\"
+        title=\"RwGPS Perm Submission Guidelines\">RidewithGPS Guidelines</a>\n              </li>\n
+        \               <li class=\"menu-item\">\n        <a href=\"https://docs.google.com/document/d/1ctLFN1LmpKpadQP7t1gl3KuUZvRip6KSl_OoipsPoRg/edit?usp=sharing\">Using
+        Our RidewithGPS Work Account</a>\n              </li>\n                <li
+        class=\"menu-item\">\n        <a href=\"https://docs.google.com/forms/d/e/1FAIpQLSe5ChFCtWtffbjvYOET-f7nsIefYozHVk_wg_Q196s9wcjsnw/viewform\"
+        title=\"Reactivate an Existing Permanent Route\">Reactivate a Route</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"https://docs.google.com/forms/d/e/1FAIpQLSdh8SxMMBaQR404hUTCNUAmZcu3kUqu8hBTw8wzEZTyUT7cJg/viewform\"
+        title=\"Submit a New Permanent Route\">Submit a New Route</a>\n              </li>\n
+        \               <li class=\"menu-item\">\n        <a href=\"https://docs.google.com/forms/d/e/1FAIpQLSeS7hrHAqjlQMm5MeydtUiwDL55yOvYMpv6FigkbHUTxSq7ew/viewform\"
+        title=\"Submit a Route Update\">Submit a Route Update</a>\n              </li>\n
+        \       </ul>\n  \n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/pages/perms-gravel-guide\" title=\"Guide to Time and Recognition
+        for Unpaved Distance\" data-drupal-link-system-path=\"node/1662\">Gravel Guide</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/pages/super-randonnees\" title=\"ACP Super Randonn\xE9es\" data-drupal-link-system-path=\"node/1549\">Super
+        Randonn\xE9es</a>\n              </li>\n        </ul>\n  \n              </li>\n
+        \               <li class=\"menu-item menu-item--expanded\">\n        <a href=\"/pbp.html\">Long
+        Brevets</a>\n                                  <ul class=\"menu\">\n                    <li
+        class=\"menu-item\">\n        <a href=\"/pages/pbp\" title=\"Paris Brest Paris
+        Information and History\" data-drupal-link-system-path=\"node/237\">Paris
+        Brest Paris</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/cgi-bin/grandrandinfo0.pl\">Other Grand Randonn\xE9es</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/pages/us-grand-randonn%C3%A9es\" data-drupal-link-system-path=\"node/1740\">US
+        Grand Randonn\xE9e History</a>\n              </li>\n        </ul>\n  \n              </li>\n
+        \               <li class=\"menu-item menu-item--expanded\">\n        <a href=\"/rules.html\">Administration</a>\n
+        \                                 <ul class=\"menu\">\n                    <li
+        class=\"menu-item\">\n        <a href=\"/pages/rules-list-page\" data-drupal-link-system-path=\"node/218\">Rules</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/cgi-bin/resultsubmit_GF.pl\" title=\"Submit results for events\" data-drupal-link-system-path=\"cgi-bin/resultsubmit_GF.pl\">Submit
+        Results</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/pages/rba-resources\" data-drupal-link-system-path=\"node/216\">RBA
+        Resources</a>\n              </li>\n                <li class=\"menu-item
+        menu-item--expanded\">\n        <a href=\"/pages/rba-resources\" data-drupal-link-system-path=\"node/216\">RBA
+        Tools</a>\n                                  <ul class=\"menu\">\n                    <li
+        class=\"menu-item\">\n        <a href=\"/cgi-bin/submit_calendar.pl\" data-drupal-link-system-path=\"cgi-bin/submit_calendar.pl\">Submit
+        Calendar</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/cgi-bin/routeassign_GF.pl\" data-drupal-link-system-path=\"cgi-bin/routeassign_GF.pl\">Assign
+        routes to calendared events</a>\n              </li>\n                <li
+        class=\"menu-item\">\n        <a href=\"/cgi-bin/submit_elevation_GF.pl\"
+        data-drupal-link-system-path=\"cgi-bin/submit_elevation_GF.pl\">Assign elevation
+        to routes</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/cgi-bin/event_pay.pl\">Pay Event Fees</a>\n              </li>\n
+        \               <li class=\"menu-item\">\n        <a href=\"/cgi-bin/regionconfigure_GF.pl\"
+        data-drupal-link-system-path=\"cgi-bin/regionconfigure_GF.pl\">Configure Region</a>\n
+        \             </li>\n        </ul>\n  \n              </li>\n                <li
+        class=\"menu-item\">\n        <a href=\"/pages/records\" title=\"Board Meeting
+        Highlights, RBA List, RUSA documents\" data-drupal-link-system-path=\"node/214\">Records</a>\n
+        \             </li>\n                <li class=\"menu-item\">\n        <a
+        href=\"/pages/incident-procedure\" data-drupal-link-system-path=\"node/449\">Incident
+        Procedure</a>\n              </li>\n                <li class=\"menu-item\">\n
+        \       <a href=\"/pages/insurance\" data-drupal-link-system-path=\"node/450\">Insurance</a>\n
+        \             </li>\n        </ul>\n  \n              </li>\n                <li
+        class=\"menu-item\">\n        <a href=\"/announcements\" data-drupal-link-system-path=\"announcements\">Announcements</a>\n
+        \             </li>\n        </ul>\n  \n\n\n  </nav>\n\n  </div>\n\n      </div>\n
+        \   </div>\n  </nav>\n  \n  \n  \n  \n  \n  <section id=\"main\" class=\"main\"
+        role=\"main\">\n    <a id=\"main-content\"></a>\n    <div class=\"container\">\n
+        \     <div class=\"row\">\n\n        \n        <div class=\"content col-lg-9
+        col-md-9  col-sm-12 col-xs-12\">\n          \n\n          \n                    \n\n
+        \         \n\n          \n            <div class=\"region region-content\">\n
+        \   <div data-drupal-messages-fallback class=\"hidden\"></div>\n<div id=\"block-rusa-theme-page-title\"
+        class=\"block block-core block-page-title-block\">\n  \n    \n      \n</h1>\n\n\n
+        \ </div>\n<div id=\"block-rusa-theme-content\" class=\"block block-system
+        block-system-main-block\">\n  \n    \n      \n<article data-history-node-id=\"210\"
+        class=\"node node--type-page node--view-mode-full\">\n\n  \n    \n\n  \n  <div
+        class=\"node__content\">\n    \n            <div class=\"clearfix text-formatted
+        field field--name-body field--type-text-with-summary field--label-hidden field__item\">\n\n\n1
+        routes matched\n<BR><BR>\n<TABLE border width=100%>\n\n<thead>\n<TR>\n<TH
+        align=center>#</TH>\n<TH align=center>Region</TH>\n<TH align=center>Km</TH>\n<TH
+        align=center>Climbing (ft)</TH>\n<TH align=center>Formats</TH>\n<TH align=center>Submitted</TH>\n<TH
+        align=center>Approved</TH>\n<TH align=center>Route Name</TH>\n<TH align=center>Start</TH>\n<TH
+        align=center>Controls</TH>\n<TH align=center>States</TH>\n</TR>\n</thead>\n\n<TR>\n<TD
+        \ align=right>1405</TD>\n<TD  align=left>NY: Long Island</TD>\n<TD  align=right>205</TD>\n<TD
+        \ align=right>&nbsp;</TD>\n<TD  align=left><div>Allure libre</div></TD>\n<TD
+        \ align=left>2013/03/19<BR>(Paul Murray)</TD>\n<TD  align=left>2013/03/23<BR>(Dan
+        Wallace)</TD>\n<TD  align=left>Ronkonkoma 200k</TD>\n<TD  align=left>Ronkonkoma,
+        NY</TD>\n<TD  align=left>Wainscott; North Haven; Shelter Island Heights; Calverton;
+        East Setauket</TD>\n<TD  align=left>NY</TD>\n</TR>\n</TABLE>\n\n</div>\n      \n
+        \ </div>\n\n</article>\n\n  </div>\n\n  </div>\n\n\n          <!---->\n        </div>\n\n
+        \             </div>\n    </div>\n  </section>\n\n  \n  \n    <a href=\"#Top\"
+        class=\"btn-btt\" title=\"Back to Top\" style=\"display: block;\"></a>\n\n
+        \   <footer id=\"footer\" class=\"footer\" role=\"contentinfo\">\n    <div
+        class=\"container footer\">\n\t  <a href=\"/report-issue\">Contact us</a>
+        with any questions, comments, or problem reports.<br>\n\t  \xA9 Copyright
+        2025, Randonneurs USA, except as noted otherwise.\n    </div>\n  </footer>\n
+        \ \n\n  <script>\n\t(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n\t(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new
+        Date();a=s.createElement(o),\n\tm=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n\t})(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n\tga('create',
+        'UA-51765480-1', 'auto');\n\tga('send', 'pageview');\n  </script>\n</div>\n\n
+        \ </div>\n\n    \n    <script type=\"application/json\" data-drupal-selector=\"drupal-settings-json\">{\"path\":{\"baseUrl\":\"\\/\",\"pathPrefix\":\"\",\"currentPath\":\"node\\/210\",\"currentPathIsAdmin\":false,\"isFront\":false,\"currentLanguage\":\"en\"},\"pluralDelimiter\":\"\\u0003\",\"suppressDeprecationErrors\":true,\"ajaxPageState\":{\"libraries\":\"eJw1jFEKgCAQBS9keKRY7WHCrsI--7DTJ0V_MwxMViFnTEKE_LGBlAL-3vqxWncschOtN4JflH2cMMSiPYluHFNrK4GTA_YOH3yAI8w\",\"theme\":\"rusa_theme\",\"theme_token\":null},\"ajaxTrustedUrl\":[],\"user\":{\"uid\":0,\"permissionsHash\":\"1fa25400d76e09975d3b9a307f6ef18428714aed4a21ac93ca659d207cabec49\"}}</script>\n\n<script
+        type=\"text/javascript\"> \nif (typeof jQuery === \"function\") { \n        jQuery(function
+        () { \n\t\t        if (window.location.host === 'linode.rusa.org') { \n                        jQuery('body').prepend('<div
+        style=\"background-color: red;\"><strong>Warning:</strong>This is the RUSA
+        test site (linode.rusa.org), not the actual RUSA site. If you reached this
+        by following a link from the real RUSA site, please report this error.</div>');
+        \n                } \n                if (typeof jQuery.fn.chosen === \"function\")
+        { \n                        jQuery('select').chosen(); \n                }
+        \n        }); \n} \n</script> \n</BODY> \n</HTML>\n<script type='text/javascript'>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new
+        Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create',
+        'UA-51765480-1', 'rusa.org');ga('require', 'displayfeatures');ga('send', 'pageview');</script></BODY>\n</HTML>\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - text/html
+      Date:
+      - Mon, 15 Dec 2025 00:02:19 GMT
+      Server:
+      - nginx/1.22.1
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

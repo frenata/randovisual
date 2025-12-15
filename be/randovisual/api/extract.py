@@ -17,7 +17,7 @@ router = APIRouter(prefix="/extract")
 @router.get("/rusa/year/{year}")
 async def extract_year(year: int, db: sql.Connection = Depends(get_db)) -> int:
     members = rusa.find_rusa_members(year)
-    stmt = psql.insert(Member).values(vars(member) for member in members)
+    stmt = psql.insert(Member).values(list(vars(member) for member in members))
     stmt = stmt.on_conflict_do_update(
         index_elements=["id"],
         set_={

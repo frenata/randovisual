@@ -68,8 +68,8 @@ lint-be:
   uv run ruff format --check
 
 [working-directory: 'be']
-test-be:
-  uv run pytest
+test-be file='':
+  uv run pytest {{file}}
 
 [working-directory: 'be']
 coverage format='term':

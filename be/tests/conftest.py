@@ -40,5 +40,5 @@ def app(request):
 
 @pytest.fixture
 def conn(request):
-    with get_engine().begin() as conn:
+    with get_engine().connect() as conn:
         yield conn
