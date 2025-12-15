@@ -1,4 +1,3 @@
-import pytest
 import sqlalchemy as sql
 import vcr
 
@@ -43,11 +42,9 @@ def test_partial_extract_perm(conn, app):
     conn.execute(sql.insert(models.Route).values(rusa_id=5688, category="RUSAT", name="GW/TZ Bridge Loop"))
     conn.commit()
 
-    before = conn.execute(sql.select(models.Route).where(models.Route.rusa_id==5688)).mappings().one()
+    before = conn.execute(sql.select(models.Route).where(models.Route.rusa_id == 5688)).mappings().one()
     app.get("/extract/rusa/route/perm/5688?force=true")
-    after = conn.execute(sql.select(models.Route).where(models.Route.rusa_id==5688)).mappings().one()
+    after = conn.execute(sql.select(models.Route).where(models.Route.rusa_id == 5688)).mappings().one()
 
-    new_non_null_keys = {k for k,v in after.items() if v} - {k for k,v in before.items() if v}
+    new_non_null_keys = {k for k, v in after.items() if v} - {k for k, v in before.items() if v}
     assert new_non_null_keys == {"geometry", "rwgps_id", "climbing"}, "new values should be extracted"
-
-
