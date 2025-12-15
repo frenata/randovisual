@@ -5,14 +5,11 @@ import vcr
 from randovisual.db import models
 
 
-@pytest.fixture
-def rider(conn):
+@vcr.use_cassette()
+def test_extract_rider(conn, app):
     conn.execute(sql.insert(models.Member).values(id=14039))
     conn.commit()
 
-
-@vcr.use_cassette()
-def test_extract_rider(rider, conn, app):
     before = conn.execute(sql.select(models.Route)).mappings().all()
     res = app.get("/extract/rusa/rider/14039")
     after = conn.execute(sql.select(models.Route)).mappings().all()
@@ -38,3 +35,19 @@ def test_extract_brevet(conn, app):
     after = conn.execute(sql.select(models.Route)).mappings().all()
 
     assert len(before) + 1 == len(after), "db should have extracted a new route"
+
+
+@vcr.use_cassette()
+def test_partial_extract_perm(conn, app):
+    conn.execute(sql.delete(models.Route))
+    conn.execute(sql.insert(models.Route).values(rusa_id=5688, category="RUSAT", name="GW/TZ Bridge Loop"))
+    conn.commit()
+
+    before = conn.execute(sql.select(models.Route).where(models.Route.rusa_id==5688)).mappings().one()
+    app.get("/extract/rusa/route/perm/5688?force=true")
+    after = conn.execute(sql.select(models.Route).where(models.Route.rusa_id==5688)).mappings().one()
+
+    new_non_null_keys = {k for k,v in after.items() if v} - {k for k,v in before.items() if v}
+    assert new_non_null_keys == {"geometry", "rwgps_id", "climbing"}, "new values should be extracted"
+
+
