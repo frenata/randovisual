@@ -4,10 +4,12 @@ import vcr
 
 from randovisual.db import models
 
+
 @pytest.fixture
 def rider(conn):
     conn.execute(sql.insert(models.Member).values(id=14039))
     conn.commit()
+
 
 @vcr.use_cassette()
 def test_extract_rider(rider, conn, app):
@@ -32,7 +34,7 @@ def test_extract_year(conn, app):
 @vcr.use_cassette()
 def test_extract_brevet(conn, app):
     before = conn.execute(sql.select(models.Route)).mappings().all()
-    res = app.get("/extract/rusa/route/brevet/1405?rwgps_id=13704022&category=ACPB")
+    app.get("/extract/rusa/route/brevet/1405?rwgps_id=13704022&category=ACPB")
     after = conn.execute(sql.select(models.Route)).mappings().all()
 
     assert len(before) + 1 == len(after), "db should have extracted a new route"
