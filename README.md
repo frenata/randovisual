@@ -33,7 +33,7 @@ TODO :)
  - [x] bug: non-visible routes can prevent selecting visible routes
  - [x] highlight and show route info on hover
  - [ ] add CD
- - [ ] add CI, tests, linting
+ - [x] add CI, tests, linting
 
 
 ### Changelog
